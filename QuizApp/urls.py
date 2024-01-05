@@ -8,6 +8,7 @@ from QuizApp import settings
 from base.views.auth import *
 from base.views.common import *
 from base.views.FileManagement import *
+from base.views.QuestionManager import *
 
 urlpatterns = []
 
@@ -33,9 +34,17 @@ file_manager = [
     path('list_folders/<str:path>', list_folders, name='list_folders'),
 ]
 
+question_manager = [
+    path('add_question', add_question, name='add_question'),
+    path('edit/<int:question_id>', edit_question, name='edit_question'),
+    path('delete/<int:question_id>', delete_question, name='delete_question'),
+    # Add other URL patterns if needed
+]
+
 urlpatterns.extend(auth)
 urlpatterns.extend(common)
 urlpatterns.extend(file_manager)
+urlpatterns.extend(question_manager)
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

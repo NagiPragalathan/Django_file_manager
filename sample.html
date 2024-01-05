@@ -1,0 +1,65 @@
+<head>
+    <!-- See http://docs.mathjax.org/en/latest/web/start.html#using-mathjax-from-a-content-delivery-network-cdn -->
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+  </head>
+
+<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+
+<!-- partial -->
+<div class="main-panel" style="margin-bottom: 7%;">
+    <div class="content-wrapper">
+        <!-- component -->
+        <div style="font-weight: bold; display: flex; font-size: 28px; align-content: center; justify-content: center; align-items: center; flex-direction: row; flex-wrap: wrap;">
+            <h1 style="font-weight: bold; font-size: 28px; margin-top: 10px;">Write Your Blog Here</h1>
+        </div>
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+                <div class="p-6 bg-white border-b border-gray-200">
+                    <form method="POST">
+                        <textarea name="editor2" id="editor2" class="border-2 border-gray-500"></textarea>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="max-w-7xl mx-auto sm:px-6 lg:px-8" id="content2">
+        <div style="padding: 23px;" class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+            <p>The number of <code>change</code> events: <strong><span id="changes"></span></strong>.</p>
+            <h3>Mirrored Content</h3>The definition of the Euler-Mascheroni constant is
+            $\gamma=\lim_{n\to\infty}\left(\sum_{k=1}^n\frac1k-ln(n)\right) $
+            <hr style="border-top-width: 1px; margin-top: 14px;">
+            <div id="editorcontent2" class="p-6 bg-white border-b border-gray-200"></div>
+        </div>
+    </div>
+    <!-- main-panel ends -->
+</div>
+<!-- page-body-wrapper ends -->
+</div>
+
+<script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+<script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
+<script>
+    var changesCount = 0;
+    var editor2 = CKEDITOR.replace('editor2', {
+        removePlugins: 'sourcearea',
+        removeButtons: 'PasteFromWord',
+        filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
+        filebrowserImageBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html?type=Images',
+        filebrowserUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Files',
+        filebrowserImageUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Images',
+        removeButtons: 'PasteFromWord',
+        
+    });
+    config.extraPlugins = 'texzilla';
+    editor2.on('change', function (ev) {
+        changesCount++;
+        document.getElementById('content2').style.display = '';
+        document.getElementById('changes').innerHTML = changesCount.toString();
+        document.getElementById('editorcontent2').innerHTML = editor2.getData();
+    });
+</script>

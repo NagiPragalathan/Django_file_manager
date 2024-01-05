@@ -33,3 +33,21 @@ class FolderManager(models.Model):
     category = models.CharField(max_length=50)
     path = models.CharField(max_length=400)
     updated_date = models.DateTimeField(auto_now=True)
+
+from django.db import models
+
+class McqQuestionBase(models.Model):
+    id = models.AutoField(primary_key=True)
+    # Question details
+    question = models.TextField()
+    image = models.ImageField(upload_to='question_images/', null=True, blank=True)
+    category = models.CharField(max_length=255)
+    question_type = models.CharField(max_length=50)  # You might want to limit the choices here
+    # Options and correct answer
+    options = models.JSONField()  # Assuming options will be stored as a JSON array
+    correct_answer = models.CharField(max_length=255)
+    # Timestamps
+    last_updated_date = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.id} - {self.question}"
