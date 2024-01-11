@@ -26,14 +26,15 @@ def enter_otp(request):
             return redirect('login')
         else:
             otp_value = generate_otp()
-            send_mail(
-                'Congratulations!',                         # subject
-                'You are lucky to receive this mail.',      # body
-                'sitejec@gmail.com',                        # sender Email
-                [email],                                    # receiver mail
-                html_message=f"<h1>Your otp is :</h1> <p>{otp_value}</p>",
-                fail_silently=False,
-            )
+            print(otp_value)
+            # send_mail(
+            #     'Congratulations!',                         # subject
+            #     'You are lucky to receive this mail.',      # body
+            #     'sitejec@gmail.com',                        # sender Email
+            #     [email],                                    # receiver mail
+            #     html_message=f"<h1>Your otp is :</h1> <p>{otp_value}</p>",
+            #     fail_silently=False,
+            # )
             otp_verification = OTPVerification(email=email,otp_key=otp_value)
             otp_verification, created = OTPVerification.objects.get_or_create(
                 email=email,

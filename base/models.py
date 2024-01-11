@@ -34,10 +34,9 @@ class FolderManager(models.Model):
     path = models.CharField(max_length=400)
     updated_date = models.DateTimeField(auto_now=True)
 
-from django.db import models
-
 class McqQuestionBase(models.Model):
     id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     # Question details
     question = models.TextField()
     image = models.ImageField(upload_to='question_images/', null=True, blank=True)
@@ -46,6 +45,9 @@ class McqQuestionBase(models.Model):
     # Options and correct answer
     options = models.JSONField()  # Assuming options will be stored as a JSON array
     correct_answer = models.CharField(max_length=255)
+    instructions = models.TextField()
+    copy_qust_path =  models.TextField()
+    path = models.CharField(max_length=400)
     # Timestamps
     last_updated_date = models.DateTimeField(auto_now=True)
 

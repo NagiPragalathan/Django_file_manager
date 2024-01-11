@@ -1,26 +1,21 @@
 from django.shortcuts import render, redirect
-from base.models import PathManager, FolderManager
+from base.models import PathManager, FolderManager, McqQuestionBase
 
 def add_data(request):
     if request.method == 'POST':
-        # Retrieve data from request.POST
-        
-        # check title value are unique or not.. check user are logged or not
-        
         path = request.POST.get('path')
         file = request.FILES.get('file')  # Assuming file is submitted in the form
-        category = request.POST.get('category')
         title = request.POST.get('title')
         
 
-        # Create a new data entry
         PathManager.objects.create(
             user_id=request.user,
             path=path,
             file=file,
-            category=category,
+            category=path.split('.')[1],
             title=title
         )
+            
         sample = PathManager.objects.filter(user_id=request.user)
         for i in sample:
             print(i.path,i.file)
@@ -35,19 +30,28 @@ def list_data(request):
 
 
 
-
 def add_folder(request):
     if request.method == 'POST':
         folder_name = request.POST.get('folder_name')
         category = request.POST.get('category')
         path = request.POST.get('path')
+        
+        print("category", category, "title",folder_name)
 
-        FolderManager.objects.create(
-            user_id=request.user,
-            FolderName=folder_name,
-            category=category,
-            path=path
-        )
+        if path == 'root':
+            FolderManager.objects.create(
+                user_id=request.user,
+                FolderName=folder_name,
+                category=folder_name,
+                path=path
+            )
+        else:
+            FolderManager.objects.create(
+                user_id=request.user,
+                FolderName=folder_name,
+                category=path.split('.')[1],
+                path=path
+            )
 
         return redirect('list_folders',path=path)  # Redirect to the list_folders view after successful submission
 
@@ -55,15 +59,28 @@ def add_folder(request):
 
 def list_folders(request, path):
     user = request.user
-    print(path)
+    temp = []
     Files = PathManager.objects.filter(user_id=user, path=path)
     folders = FolderManager.objects.filter(user_id=user, path=path).order_by('FolderName')
+    mcq_questions = McqQuestionBase.objects.filter(user_id=user, path=path)
+    unique_categories_list = list(mcq_questions.values_list('category', flat=True).distinct())
     Files = sorted(Files, key=lambda x: x.file.name)
     for file in Files:
         file_extension = file.file.name.split('.')[-1].lower()
         file.icon_path = f'/static/images/Folders/{file_extension}.png'  # Adjust the path as needed
         file.type = file_extension
         file.title_name = file.title + "." + file_extension
+    
+    category = [i.FolderName for i in FolderManager.objects.filter(user_id=user, path="root").order_by('FolderName')]
+
+    for i in unique_categories_list:
+        print(i)
+        # Create a new dictionary in each iteration
+        current_mcq_out = {}
+        current_mcq_out['name'] = i
+        current_mcq_out['icon'] = f'/static/images/Folders/mcq.jpg'
+        temp.append(current_mcq_out)
+        
     out = ""
     path_list = []
     out_path = {}
@@ -74,6 +91,8 @@ def list_folders(request, path):
     for i,j in zip(path_list,path.split('.')):
         out_path[j] = i
         
-    print(out_path)
+    print(category)
     
-    return render(request, 'file_manager/Manager.html', {'path':path,'path_alter':path.replace(".", "/"),'path_list':out_path,'folders': folders, 'files': Files})
+    return render(request, 'file_manager/Manager.html', {'path':path,'path_alter':path.replace(".", "/"),
+                                                         'path_list':out_path,'folders': folders, 'files': Files,
+                                                         'category':category, 'mcq':temp})
