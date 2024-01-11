@@ -380,26 +380,59 @@
 
         <!-- The modal structure -->
         <div class="modal fade" id="importQuestionsModal" tabindex="-1" role="dialog" aria-labelledby="importQuestionsModalLabel" aria-hidden="true">
-            <div class="modal-dialog" role="document">
+            <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <div class="modal-header">
+                    <div class="modal-header bg-primary text-white">
                         <h5 class="modal-title" id="importQuestionsModalLabel">Import Questions Hierarchy</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        sample
-                        <!-- Display the hierarchy/div structure here -->
+                        <h2 class="mb-4">Questions Grouped by copy_qust_path</h2>
+                        <div class="form-group">
+                            <label for="searchPathInput">Search Path:</label>
+                            <input type="text" class="form-control" id="searchPathInput" placeholder="Enter search term for path">
+                        </div>
+                        <div class="form-group">
+                            <label for="searchQuestionInput">Search Question:</label>
+                            <input type="text" class="form-control" id="searchQuestionInput" placeholder="Enter search term for questions">
+                        </div>
+                    
+                        <div class="search-results" id="searchResultsContainer">
+                            {% for copy_qust_path_value, data_list in grouped_data.items %}
+                                <div class="accordion" id="accordion{{ copy_qust_path_value }}">
+                                    <div class="card">
+                                        <div class="card-header" id="heading{{ copy_qust_path_value }}">
+                                            <h5 class="mb-0">
+                                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{ copy_qust_path_value }}" aria-expanded="true" aria-controls="collapse{{ copy_qust_path_value }}">
+                                                    <i class="fas fa-caret-right mr-2"></i>{{ copy_qust_path_value }}/
+                                                </button>
+                                            </h5>
+                                        </div>
+                                        <div id="collapse{{ copy_qust_path_value }}" class="collapse" aria-labelledby="heading{{ copy_qust_path_value }}" data-parent="#accordion{{ copy_qust_path_value }}">
+                                            <div class="card-body">
+                                                {% for item in data_list %}
+                                                    <div class="custom-control custom-checkbox ml-4 question">
+                                                        <input type="checkbox" class="custom-control-input" id="question_{{ item.id }}">
+                                                        <label class="custom-control-label" for="question_{{ item.id }}">{{ item.question|safe }}</label>
+                                                    </div>
+                                                {% endfor %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
                         <pre id="questionsHierarchy"></pre>
-                    </div>
+                    </div>                    
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" onclick="getCheckedIds()">Import Questions</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
-
     </div>
     <form>
         {% csrf_token %}
@@ -408,6 +441,76 @@
 </div>
 
 <script>
+    //............................................import questions......................................................................................
+    var originalState = document.querySelector('.search-results').innerHTML;
+    var checkedStates = {};  // Keep track of checked states
+
+    function filterResults(searchInput, selector) {
+        var searchValue = searchInput.value.toLowerCase();
+        var questions = document.querySelectorAll(selector);
+        var searchResultsContainer = document.getElementById('searchResultsContainer');
+
+        if (!searchValue) {
+            // If search is blank, restore original state
+            searchResultsContainer.innerHTML = originalState;
+            restoreCheckedStates();
+            return;
+        }
+
+        searchResultsContainer.innerHTML = ''; // Clear previous search results
+
+        questions.forEach(function (question) {
+            var questionText = question.textContent.toLowerCase();
+            var clonedQuestion = question.cloneNode(true);
+            var checkbox = clonedQuestion.querySelector('.custom-control-input');
+            
+            // Remember checked state before search
+            checkedStates[checkbox.id] = checkbox.checked;
+
+            if (questionText.includes(searchValue)) {
+                searchResultsContainer.appendChild(clonedQuestion);
+            }
+        });
+    }
+
+    function restoreCheckedStates() {
+        // Restore checked states after clearing search
+        for (var id in checkedStates) {
+            var checkbox = document.getElementById(id);
+            if (checkbox) {
+                checkbox.checked = checkedStates[id];
+            }
+        }
+    }
+
+    var originalState = document.querySelector('.search-results').innerHTML;
+
+
+    document.getElementById('searchPathInput').addEventListener('input', function () {
+        filterResults(this, '.card-header');
+    });
+
+    document.getElementById('searchQuestionInput').addEventListener('input', function () {
+        filterResults(this, '.question');
+    });
+    function getCheckedIds() {
+        var checkedIds = [];
+        var checkboxes = document.querySelectorAll('.custom-control-input');
+
+        checkboxes.forEach(function (checkbox) {
+            if (checkbox.checked) {
+                var id = parseInt(checkbox.id.replace('question_', ''), 10);
+                checkedIds.push(id);
+            }
+        });
+
+        console.log('Checked IDs:', checkedIds);
+        // Perform any other action you need with the checked IDs
+    }
+
+    //..................................................................................................................................
+    
+    
     let questionCount = 1;
     var question_id = [];
     var selectedQuestions = [];

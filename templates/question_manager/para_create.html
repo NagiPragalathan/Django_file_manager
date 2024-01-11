@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="utf-8">
@@ -9,15 +10,11 @@
     </script>
     <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha384-GLhlTQ8iB6bzT9tVaP5j+C9zPHNXpU9C/WH1R8iK8eZLl/6U5UZBtXQ5stwE5P1C" crossorigin="anonymous">
-    <script type="text/javascript" id="MathJax-script" async
-        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-    </script>
-    <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha384-GLhlTQ8iB6bzT9tVaP5j+C9zPHNXpU9C/WH1R8iK8eZLl/6U5UZBtXQ5stwE5P1C" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    
 </head>
 <style>
     body {
@@ -326,17 +323,47 @@
 </style>
 <body>
 <div class="container mt-5">
-    <h2>Quiz Builder</h2>
+    <h2>Paragraph Type</h2>
 
     <!-- Instructions input -->
     <div class="mb-4">
-        <label for="quizInstructions" class="form-label">Instructions:</label>
+        <label for="quizInstructions" class="form-label">Paragraph:</label>
         <textarea class="form-control" id="quizInstructions" name="quizInstructions" oninput="updateContent()" rows="4"></textarea>
     </div>
 
     <div id="questionsContainer">
         <!-- At least one empty question input and options -->
         <div class="mb-4" id="questionContainer1">
+            <div id="select_q">
+                <h4>Question 1:</h4>
+                <input type="checkbox" class="question-checkbox" id="questionCheckbox1">
+            </div>
+            <div class="mb-3">
+                <textarea class="form-control" id="question1" name="questions1" required> </textarea>
+            </div>
+
+
+            <div>
+                <button onclick="openTextarea(1)">Open</button>
+                <button onclick="closeTextarea(1)">Close</button>
+                <div id="displayContent1" class="displayContent" style="display:none"></div>
+            </div>
+
+            <div id="optionsContainer1" class="optionsContainer mb-3">
+                <div class="mb-3" id="optionContainer11">
+                   
+                </div>
+            </div>
+
+            <button type="button" class="btn btn-primary mb-3" onclick="addOption(1)">Add Option</button>
+
+            <div class="container_mb">
+                <label for="correctAnswer1" class="form-label">Correct Answer</label>
+                <select class="form-select" id="correctAnswer1" name="correctAnswers[]" required>
+                    <!-- Options will be dynamically added -->
+                </select>
+                <button type="button" class="btn btn-danger" onclick="deleteQuestion(1)">Delete Question</button>
+            </div>
 
         </div>
     </div>
@@ -353,59 +380,26 @@
 
         <!-- The modal structure -->
         <div class="modal fade" id="importQuestionsModal" tabindex="-1" role="dialog" aria-labelledby="importQuestionsModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-dialog" role="document">
                 <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
+                    <div class="modal-header">
                         <h5 class="modal-title" id="importQuestionsModalLabel">Import Questions Hierarchy</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
                         </button>
                     </div>
                     <div class="modal-body">
-                        <h2 class="mb-4">Questions Grouped by copy_qust_path</h2>
-                        <div class="form-group">
-                            <label for="searchPathInput">Search Path:</label>
-                            <input type="text" class="form-control" id="searchPathInput" placeholder="Enter search term for path">
-                        </div>
-                        <div class="form-group">
-                            <label for="searchQuestionInput">Search Question:</label>
-                            <input type="text" class="form-control" id="searchQuestionInput" placeholder="Enter search term for questions">
-                        </div>
-                    
-                        <div class="search-results" id="searchResultsContainer">
-                            {% for copy_qust_path_value, data_list in grouped_data.items %}
-                                <div class="accordion" id="accordion{{ copy_qust_path_value }}">
-                                    <div class="card">
-                                        <div class="card-header" id="heading{{ copy_qust_path_value }}">
-                                            <h5 class="mb-0">
-                                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{ copy_qust_path_value }}" aria-expanded="true" aria-controls="collapse{{ copy_qust_path_value }}">
-                                                    <i class="fas fa-caret-right mr-2"></i>{{ copy_qust_path_value }}/
-                                                </button>
-                                            </h5>
-                                        </div>
-                                        <div id="collapse{{ copy_qust_path_value }}" class="collapse" aria-labelledby="heading{{ copy_qust_path_value }}" data-parent="#accordion{{ copy_qust_path_value }}">
-                                            <div class="card-body">
-                                                {% for item in data_list %}
-                                                    <div class="custom-control custom-checkbox ml-4 question">
-                                                        <input type="checkbox" class="custom-control-input" id="question_{{ item.id }}">
-                                                        <label class="custom-control-label" for="question_{{ item.id }}">{{ item.question|safe }}</label>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
+                        sample
+                        <!-- Display the hierarchy/div structure here -->
                         <pre id="questionsHierarchy"></pre>
-                    </div>                    
+                    </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onclick="getCheckedIds()">Import Questions</button>
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
     <form>
         {% csrf_token %}
@@ -414,111 +408,36 @@
 </div>
 
 <script>
-    //............................................import questions......................................................................................
-    var originalState = document.querySelector('.search-results').innerHTML;
-    var checkedStates = {};  // Keep track of checked states
-
-    function filterResults(searchInput, selector) {
-        var searchValue = searchInput.value.toLowerCase();
-        var questions = document.querySelectorAll(selector);
-        var searchResultsContainer = document.getElementById('searchResultsContainer');
-
-        if (!searchValue) {
-            // If search is blank, restore original state
-            searchResultsContainer.innerHTML = originalState;
-            restoreCheckedStates();
-            return;
-        }
-
-        searchResultsContainer.innerHTML = ''; // Clear previous search results
-
-        questions.forEach(function (question) {
-            var questionText = question.textContent.toLowerCase();
-            var clonedQuestion = question.cloneNode(true);
-            var checkbox = clonedQuestion.querySelector('.custom-control-input');
-            
-            // Remember checked state before search
-            checkedStates[checkbox.id] = checkbox.checked;
-
-            if (questionText.includes(searchValue)) {
-                searchResultsContainer.appendChild(clonedQuestion);
-            }
-        });
-    }
-
-    function restoreCheckedStates() {
-        // Restore checked states after clearing search
-        for (var id in checkedStates) {
-            var checkbox = document.getElementById(id);
-            if (checkbox) {
-                checkbox.checked = checkedStates[id];
-            }
-        }
-    }
-
-    var originalState = document.querySelector('.search-results').innerHTML;
-
-
-    document.getElementById('searchPathInput').addEventListener('input', function () {
-        filterResults(this, '.card-header');
-    });
-
-    document.getElementById('searchQuestionInput').addEventListener('input', function () {
-        filterResults(this, '.question');
-    });
-    function getCheckedIds() {
-        var checkedIds = [];
-        var checkboxes = document.querySelectorAll('.custom-control-input');
-
-        checkboxes.forEach(function (checkbox) {
-            if (checkbox.checked) {
-                var id = parseInt(checkbox.id.replace('question_', ''), 10);
-                checkedIds.push(id);
-            }
-        });
-        const csrfToken = "{{ csrf_token }}";
-        const path = "{{ path }}";
-        const additionalData = {
-            csrfmiddlewaretoken: csrfToken,  // Include CSRF token if needed
-            path: path,
-            ids:checkedIds
-        };
-        console.log(getQuizData())
-        // Combine JSON data and additional data
-        const combinedData = { ...getQuizData(), ...additionalData };
-        console.log(combinedData)
-        // AJAX request using fetch with a POST method
-        fetch('/import_questions', {
-            method: 'POST',  // Use POST method
-            headers: {
-                'Content-Type': 'application/json',
-                // Add any other headers as needed
-            },
-            body: JSON.stringify(combinedData),
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                // Handle success response from the server
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Handle error response from the server
-            });
-
-        console.log('Checked IDs:', checkedIds);
-        // Perform any other action you need with the checked IDs
-    }
-
-
-    //..................................................................................................................................
-    let questionCount = 0;
+    let questionCount = 1;
     var question_id = [];
     var selectedQuestions = [];
     var clipboardData;
     var editor_obj = {}
 
-    
+    //...............................................update instructions...................................................................
+    var editor_inst = CKEDITOR.replace('quizInstructions', {
+        removePlugins: 'sourcearea',
+        removeButtons: 'PasteFromWord',
+        filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
+        filebrowserImageBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html?type=Images',
+        filebrowserUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Files',
+        filebrowserImageUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Images',
+        removeButtons: 'PasteFromWord'
+    });
+    //..................................................................................................................................
+        
+
+    var editor2 = CKEDITOR.replace('question1', {
+        removePlugins: 'sourcearea',
+        removeButtons: 'PasteFromWord',
+        filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
+        filebrowserImageBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html?type=Images',
+        filebrowserUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Files',
+        filebrowserImageUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Images',
+        removeButtons: 'PasteFromWord'
+    });
+    editor_obj['question1']=editor2
+    console.log(editor_obj,editor_obj['question1'])
     function openTextarea(id) {
         console.log(id)
         document.getElementById("displayContent"+id).style.display="block";
@@ -529,6 +448,12 @@
         // Clear the content of the paragraph
         document.getElementById("displayContent"+id).style.display="none";
     }
+    editor2.on('change', function(ev) {
+        var textareaContent = document.getElementById("question1").value;
+        document.getElementById("displayContent1").innerHTML = editor2.getData();
+        MathJax.typeset();
+    });
+
     
 
     function addQuestion() {
@@ -546,7 +471,6 @@
                 <input type="checkbox" class="question-checkbox" id="questionCheckbox${questionCount}">
             </div>
             <div class="mb-3">
-                <input type="text" style='display:none' value='none' id="id_${questionCount}">
                 <textarea class="form-control" id="question${questionCount}" name="questions[]" required> </textarea>
             </div>
 
@@ -659,19 +583,6 @@
         }
     }
 
-    // .........................................update instructions...................................................................
-
-    var editor_inst = CKEDITOR.replace('quizInstructions', {
-        removePlugins: 'sourcearea',
-        removeButtons: 'PasteFromWord',
-        filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
-        filebrowserImageBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html?type=Images',
-        filebrowserUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Files',
-        filebrowserImageUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Images',
-        removeButtons: 'PasteFromWord'
-    });
-    //..................................................................................................................................
-
     function getQuizData() {
         const quizData = {
             instructions: editor_inst.getData(),
@@ -682,27 +593,22 @@
         const questionDivs = questionsContainer.querySelectorAll('[id^="questionContainer"]');
         
         questionDivs.forEach((questionDiv, questionIndex) => {
-            try{
-                const questionData = {
-                    id: document.getElementById(`id_${questionDiv.id.at(-1)}`).value,
-                    question: editor_obj[`question${questionDiv.id.at(-1)}`].getData(),
-                    options: [],
-                    correctAnswer: document.getElementById(`correctAnswer${questionDiv.id.at(-1)}`).value
-                };
-        
-                const optionsContainer = questionDiv.querySelector(`#optionsContainer${questionDiv.id.at(-1)}`);
-                const optionInputs = optionsContainer.querySelectorAll('[id^="option"]');
-        
-                optionInputs.forEach((optionInput) => {
-                    if(optionInput.value !== undefined){
-                        questionData.options.push(optionInput.value);
-                    }
-                });
-        
-                quizData.questions.push(questionData);
-            }catch{
-                console.log('err')
-            }
+            const questionData = {
+                question: editor_obj[`question${questionDiv.id.at(-1)}`].getData(),
+                options: [],
+                correctAnswer: document.getElementById(`correctAnswer${questionDiv.id.at(-1)}`).value
+            };
+    
+            const optionsContainer = questionDiv.querySelector(`#optionsContainer${questionDiv.id.at(-1)}`);
+            const optionInputs = optionsContainer.querySelectorAll('[id^="option"]');
+            console.log(optionInputs)
+            optionInputs.forEach((optionInput) => {
+                if(optionInput.value !== undefined){
+                    questionData.options.push(optionInput.value);
+                }
+            });
+    
+            quizData.questions.push(questionData);
         });
     
         // Display the JSON data in the console
@@ -765,114 +671,6 @@
     }
 
 
-    // >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> update exsisting questions >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-
-    function addQuestionFromJSON(questionData) {
-        questionCount++;
-    
-        const questionsContainer = document.getElementById('questionsContainer');
-    
-        const questionDiv = document.createElement('div');
-        questionDiv.classList.add('mb-4');
-        questionDiv.id = `questionContainer${questionCount}`;
-        question_id.push(`questionContainer${questionCount}`);
-        questionDiv.innerHTML = `
-            <div id="select_q">
-                <h4>Question ${questionCount}:</h4>
-                <input type="checkbox" class="question-checkbox" id="questionCheckbox${questionCount}">
-            </div>
-            <div class="mb-3">
-                <input type="text" style='display:none' value=${questionData.id} id="id_${questionCount}">
-                <textarea class="form-control" id="question${questionCount}" name="questions[]" required>${questionData.question}</textarea>
-            </div>
-    
-            <div>
-                <button onclick="openTextarea(${questionCount})">Open</button>
-                <button onclick="closeTextarea(${questionCount})">Close</button>
-                <p id="displayContent${questionCount}" class='displayContent' style="display:none"></p>
-            </div>
-    
-            <div class="mb-3 optionsContainer" id="optionsContainer${questionCount}">
-            </div>
-    
-            <button type="button" class="btn btn-primary mb-3" onclick="addOption(${questionCount})">Add Option</button>
-    
-            <div class="container_mb">
-                <label for="correctAnswer${questionCount}" class="form-label">Correct Answer</label>
-                <select class="form-select" id="correctAnswer${questionCount}" name="correctAnswers[]" required>
-                    <!-- Options will be dynamically added -->
-                </select>
-                <button type="button" class="btn btn-danger" onclick="deleteQuestion(${questionCount})">Delete Question</button>
-            </div>
-        `;
-    
-        questionsContainer.appendChild(questionDiv);
-    
-        // Add default option for the new question
-        // addOption(questionCount);
-        var editor_objs = CKEDITOR.replace(`question${questionCount}`, {
-            removePlugins: 'sourcearea',
-            removeButtons: 'PasteFromWord',
-            filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
-            filebrowserImageBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html?type=Images',
-            filebrowserUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Files',
-            filebrowserImageUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Images',
-            removeButtons: 'PasteFromWord'
-        });
-        editor_obj[`question${questionCount}`]=editor_objs
-        editor_objs.on('change', function(ev) {
-            var textareaContent = document.getElementById(`question${questionCount}`).value;
-            console.log(textareaContent)
-            document.getElementById(`displayContent${questionCount}`).innerHTML = editor_objs.getData();
-            MathJax.typeset();
-        });
-        
-    
-        // Populate options
-        var count = 1
-        questionData.options.forEach((option, index) => {
-            if (option) {
-                const optionInput = document.createElement('div');
-                optionInput.classList.add('mb-3');
-                optionInput.classList.add('optionsContainer');
-                optionInput.id = `optionContainer${questionCount}${index + 1}`;
-                optionInput.innerHTML = `
-                <label for="option${questionCount}${index + 1}" class="form-label">Option ${count}:</label>
-                <div id='option_val'>
-                    <input type="text" class="form-control" id="option${questionCount}${index + 1}" name="options[]" required value="${option}">
-                    <button type="button" class="btn btn-danger btn-sm" onclick="deleteOption(${questionCount}, ${index + 1})"><img id="option_icon" src="https://cdn-icons-png.flaticon.com/512/7709/7709786.png"/></button>
-                </div>
-                    `;
-                count++;
-                document.getElementById(`optionsContainer${questionCount}`).appendChild(optionInput);
-            }
-        });
-    
-        // Set correct answer
-        const correctAnswerDropdown = document.getElementById(`correctAnswer${questionCount}`);
-        console.log(questionData)
-        var opt_count=1;
-        questionData.options.forEach((option, index) => {
-            console.log(option, index)
-            if (option) {
-                const newOption = document.createElement('option');
-                newOption.text = `Option ${opt_count}`;
-                newOption.value = `option${opt_count}`;
-                correctAnswerDropdown.add(newOption);
-                if (questionData.correctAnswer === `option${opt_count}`) {
-                    newOption.selected = true;
-                }
-                opt_count++;
-            }
-        });
-    }
-    
-    // Example usage
-    const jsonData = {{ mcq_quiz|safe }}
-    editor_inst.setData(jsonData.instructions);
-    jsonData.questions.forEach(questionData => addQuestionFromJSON(questionData));
-
-    // Submit data
     function submit_data() {
         // Additional data
         const csrfToken = "{{ csrf_token }}";
@@ -882,13 +680,13 @@
             category: 'sample',  // Add any other key-value pairs
             path: path
         };
-        console.log(getQuizData())
+    
         // Combine JSON data and additional data
         const combinedData = { ...getQuizData(), ...additionalData };
         console.log(combinedData)
     
         // AJAX request using fetch with a POST method
-        fetch('/handle_questions', {
+        fetch('/update_para_db', {
             method: 'POST',  // Use POST method
             headers: {
                 'Content-Type': 'application/json',
@@ -899,6 +697,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
+                window.location.replace("/para_edit_question/"+data.path+"/"+data.u_id);
                 // Handle success response from the server
             })
             .catch(error => {
@@ -910,4 +709,7 @@
 
 </body>
 </html>
+
+
+
 

@@ -9,15 +9,7 @@
     </script>
     <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha384-GLhlTQ8iB6bzT9tVaP5j+C9zPHNXpU9C/WH1R8iK8eZLl/6U5UZBtXQ5stwE5P1C" crossorigin="anonymous">
-    <script type="text/javascript" id="MathJax-script" async
-        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
-    </script>
-    <script src="https://cdn.ckeditor.com/4.16.0/standard/ckeditor.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha384-GLhlTQ8iB6bzT9tVaP5j+C9zPHNXpU9C/WH1R8iK8eZLl/6U5UZBtXQ5stwE5P1C" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
 </head>
 <style>
     body {
@@ -348,170 +340,10 @@
         <button type="button" class="btn btn-primary" onclick="pasteCopiedQuestions()">Paste Copied Questions</button>
         <button type="submit" class="btn btn-primary" onclick="submit_data()">Submit Quiz</button>
         <button type="button" class="btn btn-primary" onclick="getQuizData()">Get Quiz Data (JSON)</button>    
-        <!-- Add this button where you want to trigger the import -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importQuestionsModal">Import Questions</button>
-
-        <!-- The modal structure -->
-        <div class="modal fade" id="importQuestionsModal" tabindex="-1" role="dialog" aria-labelledby="importQuestionsModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg" role="document">
-                <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
-                        <h5 class="modal-title" id="importQuestionsModalLabel">Import Questions Hierarchy</h5>
-                        <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <h2 class="mb-4">Questions Grouped by copy_qust_path</h2>
-                        <div class="form-group">
-                            <label for="searchPathInput">Search Path:</label>
-                            <input type="text" class="form-control" id="searchPathInput" placeholder="Enter search term for path">
-                        </div>
-                        <div class="form-group">
-                            <label for="searchQuestionInput">Search Question:</label>
-                            <input type="text" class="form-control" id="searchQuestionInput" placeholder="Enter search term for questions">
-                        </div>
-                    
-                        <div class="search-results" id="searchResultsContainer">
-                            {% for copy_qust_path_value, data_list in grouped_data.items %}
-                                <div class="accordion" id="accordion{{ copy_qust_path_value }}">
-                                    <div class="card">
-                                        <div class="card-header" id="heading{{ copy_qust_path_value }}">
-                                            <h5 class="mb-0">
-                                                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse{{ copy_qust_path_value }}" aria-expanded="true" aria-controls="collapse{{ copy_qust_path_value }}">
-                                                    <i class="fas fa-caret-right mr-2"></i>{{ copy_qust_path_value }}/
-                                                </button>
-                                            </h5>
-                                        </div>
-                                        <div id="collapse{{ copy_qust_path_value }}" class="collapse" aria-labelledby="heading{{ copy_qust_path_value }}" data-parent="#accordion{{ copy_qust_path_value }}">
-                                            <div class="card-body">
-                                                {% for item in data_list %}
-                                                    <div class="custom-control custom-checkbox ml-4 question">
-                                                        <input type="checkbox" class="custom-control-input" id="question_{{ item.id }}">
-                                                        <label class="custom-control-label" for="question_{{ item.id }}">{{ item.question|safe }}</label>
-                                                    </div>
-                                                {% endfor %}
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            {% endfor %}
-                        </div>
-                        <pre id="questionsHierarchy"></pre>
-                    </div>                    
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" onclick="getCheckedIds()">Import Questions</button>
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
-    <form>
-        {% csrf_token %}
-        <!-- Your form fields and other content go here -->
-    </form>
 </div>
 
 <script>
-    //............................................import questions......................................................................................
-    var originalState = document.querySelector('.search-results').innerHTML;
-    var checkedStates = {};  // Keep track of checked states
-
-    function filterResults(searchInput, selector) {
-        var searchValue = searchInput.value.toLowerCase();
-        var questions = document.querySelectorAll(selector);
-        var searchResultsContainer = document.getElementById('searchResultsContainer');
-
-        if (!searchValue) {
-            // If search is blank, restore original state
-            searchResultsContainer.innerHTML = originalState;
-            restoreCheckedStates();
-            return;
-        }
-
-        searchResultsContainer.innerHTML = ''; // Clear previous search results
-
-        questions.forEach(function (question) {
-            var questionText = question.textContent.toLowerCase();
-            var clonedQuestion = question.cloneNode(true);
-            var checkbox = clonedQuestion.querySelector('.custom-control-input');
-            
-            // Remember checked state before search
-            checkedStates[checkbox.id] = checkbox.checked;
-
-            if (questionText.includes(searchValue)) {
-                searchResultsContainer.appendChild(clonedQuestion);
-            }
-        });
-    }
-
-    function restoreCheckedStates() {
-        // Restore checked states after clearing search
-        for (var id in checkedStates) {
-            var checkbox = document.getElementById(id);
-            if (checkbox) {
-                checkbox.checked = checkedStates[id];
-            }
-        }
-    }
-
-    var originalState = document.querySelector('.search-results').innerHTML;
-
-
-    document.getElementById('searchPathInput').addEventListener('input', function () {
-        filterResults(this, '.card-header');
-    });
-
-    document.getElementById('searchQuestionInput').addEventListener('input', function () {
-        filterResults(this, '.question');
-    });
-    function getCheckedIds() {
-        var checkedIds = [];
-        var checkboxes = document.querySelectorAll('.custom-control-input');
-
-        checkboxes.forEach(function (checkbox) {
-            if (checkbox.checked) {
-                var id = parseInt(checkbox.id.replace('question_', ''), 10);
-                checkedIds.push(id);
-            }
-        });
-        const csrfToken = "{{ csrf_token }}";
-        const path = "{{ path }}";
-        const additionalData = {
-            csrfmiddlewaretoken: csrfToken,  // Include CSRF token if needed
-            path: path,
-            ids:checkedIds
-        };
-        console.log(getQuizData())
-        // Combine JSON data and additional data
-        const combinedData = { ...getQuizData(), ...additionalData };
-        console.log(combinedData)
-        // AJAX request using fetch with a POST method
-        fetch('/import_questions', {
-            method: 'POST',  // Use POST method
-            headers: {
-                'Content-Type': 'application/json',
-                // Add any other headers as needed
-            },
-            body: JSON.stringify(combinedData),
-        })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                // Handle success response from the server
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Handle error response from the server
-            });
-
-        console.log('Checked IDs:', checkedIds);
-        // Perform any other action you need with the checked IDs
-    }
-
-
-    //..................................................................................................................................
     let questionCount = 0;
     var question_id = [];
     var selectedQuestions = [];
@@ -877,10 +709,12 @@
         // Additional data
         const csrfToken = "{{ csrf_token }}";
         const path = "{{ path }}";
+        const cat = "{{ cat }}"
         const additionalData = {
             csrfmiddlewaretoken: csrfToken,  // Include CSRF token if needed
             category: 'sample',  // Add any other key-value pairs
-            path: path
+            path: path,
+            cat:cat
         };
         console.log(getQuizData())
         // Combine JSON data and additional data
@@ -888,7 +722,7 @@
         console.log(combinedData)
     
         // AJAX request using fetch with a POST method
-        fetch('/handle_questions', {
+        fetch('/handle_para_questions', {
             method: 'POST',  // Use POST method
             headers: {
                 'Content-Type': 'application/json',

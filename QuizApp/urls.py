@@ -36,11 +36,15 @@ file_manager = [
 
 question_manager = [
     path('add_question/<str:path>', add_question, name='add_question'),
+    path('add_para_question/<str:path>', add_para_question, name='add_para_question'),
     path('edit_question/<str:path>/<str:cat>', edit_question, name='edit_question'),
+    path('para_edit_question/<str:path>/<str:cat>', para_edit_question, name='para_edit_question'),
     path('update_db', update_db, name='update_db'),
+    path('update_para_db', update_para_db, name='update_para_db'),
     path('handle_questions', handle_questions, name='handle_questions'),
+    path('handle_para_questions', handle_para_questions, name='handle_para_questions'),
+    path('import_questions', import_questions, name='import_questions'),
     path('get_questions/<str:category>/', get_questions_by_category, name='get_questions_by_category'),
-    path('edit/<int:question_id>', edit_question, name='edit_question'),
     path('delete/<int:question_id>', delete_question, name='delete_question'),
     # Add other URL patterns if needed
 ]
