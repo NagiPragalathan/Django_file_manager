@@ -3,7 +3,10 @@ from django.db import models
 # Create your models here.
 from django.utils import timezone
 from django.contrib.auth.models import User
+from ckeditor_uploader.fields import RichTextUploadingField
 
+class ImageEditor(models.Model):
+    question = RichTextUploadingField()
 
 class OTPVerification(models.Model):
     id = models.AutoField(primary_key=True)

@@ -39,7 +39,13 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "base",
     'corsheaders',
+    'ckeditor',
+    'filebrowser',
+    'ckeditor_uploader'
 ]
+
+CKEDITOR_UPLOAD_PATH = 'content/ckeditor/'
+
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",

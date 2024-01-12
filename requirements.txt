@@ -1,3 +1,5 @@
 django
 django_otp
 django-cors-headers
+django-ckeditor 
+django-filebrowser

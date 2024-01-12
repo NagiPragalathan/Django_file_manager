@@ -35,11 +35,13 @@ file_manager = [
 ]
 
 question_manager = [
+    path('ckeditor', include('ckeditor_uploader.urls')),
     path('add_question/<str:path>', add_question, name='add_question'),
     path('add_para_question/<str:path>', add_para_question, name='add_para_question'),
-    path('edit_question/<str:path>/<str:cat>', edit_question, name='edit_question'),
+    path('edit_question/<str:path>', edit_question, name='edit_question'),
     path('para_edit_question/<str:path>/<str:cat>', para_edit_question, name='para_edit_question'),
     path('update_db', update_db, name='update_db'),
+    path('add_image_editor', add_image_editor, name='add_image_editor'),
     path('update_para_db', update_para_db, name='update_para_db'),
     path('handle_questions', handle_questions, name='handle_questions'),
     path('handle_para_questions', handle_para_questions, name='handle_para_questions'),
@@ -49,6 +51,7 @@ question_manager = [
     # Add other URL patterns if needed
 ]
 
+urlpatterns.extend(admin_)
 urlpatterns.extend(auth)
 urlpatterns.extend(common)
 urlpatterns.extend(file_manager)

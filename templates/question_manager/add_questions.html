@@ -322,6 +322,38 @@
     
 </style>
 <body>
+    <nav style="position: sticky; top: 0; z-index: 999;" class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <button type="submit" class="btn btn-primary" onclick="submit_data()">Submit Quiz</button>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Tools
+                    </a>
+                    <div class="dropdown-menu" style="" aria-labelledby="navbarDropdown">
+                        <button type="button" style="border-radius: 7px; background: #f7f8f8; border: 2px solid #d6d6d6; font-size: 11px; width: 100%;" onclick="copySelectedQuestions()">Copy Selected Questions</button>
+                        {% comment %} <button type="button" style="border-radius: 7px; background: #f7f8f8; border: 2px solid #d6d6d6; font-size: 11px; width: 100%;" onclick="pasteCopiedQuestions()">Paste Copied Questions</button> {% endcomment %}
+                        <div class="dropdown-divider"></div>
+                        <button type="button" style="border-radius: 7px; background: #f7f8f8; border: 2px solid #d6d6d6; font-size: 11px; width: 100%;" data-toggle="modal" data-target="#importQuestionsModal">Import Questions</button>
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="{% url 'list_folders' path='root' %}">Root</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <a href="{% url 'list_folders' path=path %}">
+                    <button class="btn btn-outline-danger my-2 my-sm-0" type="button">Back</button>
+                </a>
+            </form>
+        </div>
+    </nav>
 <div class="container mt-5">
     <h2>Quiz Builder</h2>
 
@@ -371,18 +403,17 @@
     <button type="button" class="btn btn-success mb-3" onclick="addQuestion()">Add New Question</button>
 
     <div class="mb-3">
-        <button type="button" class="btn btn-primary" onclick="copySelectedQuestions()">Copy Selected Questions</button>
+        {% comment %} <button type="button" class="btn btn-primary" onclick="copySelectedQuestions()">Copy Selected Questions</button>
         <button type="button" class="btn btn-primary" onclick="pasteCopiedQuestions()">Paste Copied Questions</button>
-        <button type="submit" class="btn btn-primary" onclick="submit_data()">Submit Quiz</button>
-        <button type="button" class="btn btn-primary" onclick="getQuizData()">Get Quiz Data (JSON)</button>    
+        <button type="button" class="btn btn-primary" onclick="getQuizData()">Get Quiz Data (JSON)</button>     {% endcomment %}
         <!-- Add this button where you want to trigger the import -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importQuestionsModal">Import Questions</button>
+        {% comment %} <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importQuestionsModal">Import Questions</button> {% endcomment %}
 
         <!-- The modal structure -->
         <div class="modal fade" id="importQuestionsModal" tabindex="-1" role="dialog" aria-labelledby="importQuestionsModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg" role="document">
                 <div class="modal-content">
-                    <div class="modal-header bg-primary text-white">
+                    <div class="modal-header bg-primary text-white" style="z-index:9999">
                         <h5 class="modal-title" id="importQuestionsModalLabel">Import Questions Hierarchy</h5>
                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                             <span aria-hidden="true">&times;</span>
@@ -503,6 +534,37 @@
                 checkedIds.push(id);
             }
         });
+        const csrfToken = "{{ csrf_token }}";
+        const path = "{{ path }}";
+        const additionalData = {
+            csrfmiddlewaretoken: csrfToken,  // Include CSRF token if needed
+            path: path,
+            ids:checkedIds
+        };
+        console.log(getQuizData())
+        // Combine JSON data and additional data
+        const combinedData = { ...getQuizData(), ...additionalData };
+        console.log(combinedData)
+        // AJAX request using fetch with a POST method
+        fetch('/import_questions', {
+            method: 'POST',  // Use POST method
+            headers: {
+                'Content-Type': 'application/json',
+                // Add any other headers as needed
+            },
+            body: JSON.stringify(combinedData),
+        })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert('Your questions have been Importeda and saved to the server successfully!');
+                window.location.replace("/edit_question/"+data.path);
+                // Handle success response from the server
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                // Handle error response from the server
+            });
 
         console.log('Checked IDs:', checkedIds);
         // Perform any other action you need with the checked IDs
@@ -800,6 +862,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
+                window.location.replace("/edit_question/"+data.path);
                 // Handle success response from the server
             })
             .catch(error => {

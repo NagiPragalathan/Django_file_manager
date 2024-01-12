@@ -1,3 +1,5 @@
+# admin.py
 from django.contrib import admin
+from .models import ImageEditor
 
-# Register your models here.
+admin.site.register(ImageEditor)
