@@ -11,18 +11,21 @@ from itertools import groupby
 
 
 def add_question(request, path):
+    for i in McqQuestionBase.objects.all():
+        print(i.path,i.copy_qust_path)
     result = (
         McqQuestionBase.objects
-        .values('copy_qust_path', 'id', 'user_id', 'question', 'image', 'category', 'question_type', 'options', 'correct_answer', 'instructions', 'path', 'last_updated_date')
+        .values('path', 'id', 'user_id', 'question', 'image', 'category', 'question_type', 'options', 'correct_answer', 'instructions', 'copy_qust_path', 'last_updated_date')
         .annotate(count=Count('id'))
-        .annotate(copy_qust_path_value=F('path'))
-        .filter(copy_qust_path_value__isnull=False, user_id=request.user)
-        .exclude(copy_qust_path_value__contains=',', path=path)  # Exclude items with a comma
-        .annotate(copy_qust_path_values=F('copy_qust_path_value'))
+        .annotate(path_value=F('path'))
+        .filter(path_value__isnull=False, user_id=request.user)
     )
+
+    # Group the results by path_value
+    grouped_data = {key: list(group) for key, group in groupby(result, key=lambda x: x['path_value'])}
     print(result)
-    # Group the results by copy_qust_path_value
-    grouped_data = {key: list(group) for key, group in groupby(result, key=lambda x: x['path'])}
+    # Group the results by path_value
+    # grouped_data = {key: list(group) for key, group in groupby(result, key=lambda x: x['path_values'])}
     # Pass the grouped_data to the template
     return render(request, 'question_manager/add_questions.html', {"grouped_data": grouped_data, "path": path})
 
@@ -232,34 +235,36 @@ def handle_questions(request):
             options = question_data.get('options', [])
             correct_answer = question_data.get('correctAnswer', '')
             
-            print(path, len(path))
+            print(path, len(path),"question_text", question_text, len(question_text))
             # You may need to adjust the category and path values based on your requirements
             category = path.split('.')[1]
             
-
-            # Create or update McqQuestionBase instance
-            if question_id and question_id != 'none':
-                # Update existing question
-                question = McqQuestionBase.objects.get(pk=question_id)
-                question.question = question_text
-                question.options = options
-                question.correct_answer = correct_answer
-                question.instructions = instructions
-                question.last_updated_date = timezone.now()
-                question.save()
-                print(question.question,"are updated...!")
+            if len(question_text) > 11:
+                # Create or update McqQuestionBase instance
+                if question_id and question_id != 'none':
+                    # Update existing question
+                    question = McqQuestionBase.objects.get(pk=question_id)
+                    question.question = question_text
+                    question.options = options
+                    question.correct_answer = correct_answer
+                    question.instructions = instructions
+                    question.last_updated_date = timezone.now()
+                    question.save()
+                    print(question.question,"are updated...!")
+                else:
+                    # Create new question
+                    McqQuestionBase.objects.create(
+                        user_id=request.user,
+                        question=question_text,
+                        options=options,
+                        correct_answer=correct_answer,
+                        instructions=instructions,
+                        category=category,
+                        path=path,
+                        copy_qust_path = path
+                    )
             else:
-                # Create new question
-                McqQuestionBase.objects.create(
-                    user_id=request.user,
-                    question=question_text,
-                    options=options,
-                    correct_answer=correct_answer,
-                    instructions=instructions,
-                    category=category,
-                    path=path,
-                    copy_qust_path = path
-                )
+                return JsonResponse({'error': f'The question ("{question_text}") should be more than 11 characters.'}, status=400)
 
         return JsonResponse({'message': 'Data processed successfully'}, status=200)
 
@@ -287,31 +292,35 @@ def handle_para_questions(request):
             # You may need to adjust the category and path values based on your requirements
             category = path.split('.')[1]
             
+            if len(question_text) > 11:
 
-            # Create or update McqQuestionBase instance
-            if question_id and question_id != 'none':
-                # Update existing question
-                question = McqQuestionBase.objects.get(pk=question_id)
-                question.question = question_text
-                question.options = options
-                question.correct_answer = correct_answer
-                question.instructions = instructions
-                question.last_updated_date = timezone.now()
-                question.save()
-                print(question.question,"are updated...!")
+                # Create or update McqQuestionBase instance
+                if question_id and question_id != 'none':
+                    # Update existing question
+                    question = McqQuestionBase.objects.get(pk=question_id)
+                    question.question = question_text
+                    question.options = options
+                    question.correct_answer = correct_answer
+                    question.instructions = instructions
+                    question.last_updated_date = timezone.now()
+                    question.save()
+                    print(question.question,"are updated...!")
+                else:
+                    # Create new question
+                    McqQuestionBase.objects.create(
+                        user_id=request.user,
+                        question=question_text,
+                        options=options,
+                        correct_answer=correct_answer,
+                        instructions=instructions,
+                        category=category,
+                        path=path,
+                        copy_qust_path = path,
+                        quest_id = cat
+                    )
             else:
-                # Create new question
-                McqQuestionBase.objects.create(
-                    user_id=request.user,
-                    question=question_text,
-                    options=options,
-                    correct_answer=correct_answer,
-                    instructions=instructions,
-                    category=category,
-                    path=path,
-                    copy_qust_path = path,
-                    quest_id = cat
-                )
+                return JsonResponse({'error': f'The question ("{question_text}") should be more than 11 characters.'}, status=200)
+
 
         return JsonResponse({'message': 'Data processed successfully'}, status=200)
 
@@ -328,11 +337,11 @@ def import_questions(request):
             question = McqQuestionBase.objects.get(id=i)
             if path not in question.path.split(','):
                 new_path = question.path +", "+ path
+                question.copy_qust_path = new_path
+                question.last_updated_date = timezone.now()
+                question.save()
             else:
                 continue
-            question.copy_qust_path = new_path
-            question.last_updated_date = timezone.now()
-            question.save()
         for i in ids:
             question = McqQuestionBase.objects.get(id=i)
             print(question.copy_qust_path)
