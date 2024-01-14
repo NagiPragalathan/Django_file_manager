@@ -42,6 +42,7 @@ class McqQuestionBase(models.Model):
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     # Question details
     question = models.TextField()
+    explain = models.TextField(null=True, blank=True)
     image = models.ImageField(upload_to='question_images/', null=True, blank=True)
     category = models.CharField(max_length=255)
     question_type = models.CharField(max_length=50)  # You might want to limit the choices here

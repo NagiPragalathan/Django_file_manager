@@ -388,7 +388,10 @@
             </div>
 
             <button type="button" class="btn btn-primary mb-3" onclick="addOption(1)">Add Option</button>
-
+            
+            <div class="mb-3">
+                <textarea class="form-control" id="question_1" name="questions[]" required> </textarea>
+            </div>
             <div class="container_mb">
                 <label for="correctAnswer1" class="form-label">Correct Answer</label>
                 <select class="form-select" id="correctAnswer1" name="correctAnswers[]" required>
@@ -397,12 +400,14 @@
                 <button type="button" class="btn btn-danger" onclick="deleteQuestion(1)">Delete Question</button>
             </div>
 
+
         </div>
     </div>
 
     <button type="button" class="btn btn-success mb-3" onclick="addQuestion()">Add New Question</button>
 
     <div class="mb-3">
+        <button type="button" class="btn btn-primary" onclick="getQuizData()">Get Quiz Data (JSON)</button>
         {% comment %} <button type="button" class="btn btn-primary" onclick="copySelectedQuestions()">Copy Selected Questions</button>
         <button type="button" class="btn btn-primary" onclick="pasteCopiedQuestions()">Paste Copied Questions</button>
         <button type="button" class="btn btn-primary" onclick="getQuizData()">Get Quiz Data (JSON)</button>     {% endcomment %}
@@ -578,15 +583,16 @@
     var selectedQuestions = [];
     var clipboardData;
     var editor_obj = {}
+    var editor_objEx = {}
 
     //...............................................update instructions...................................................................
     var editor_inst = CKEDITOR.replace('quizInstructions', {
         removePlugins: 'sourcearea',
         removeButtons: 'PasteFromWord',
         filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
-        filebrowserImageBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html?type=Images',
-        filebrowserUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Files',
-        filebrowserImageUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Images',
+        filebrowserImageBrowseUrl: "{% url 'ckeditor_browse' %}",
+        filebrowserUploadUrl: "{% url 'ckeditor_upload' %}",
+        filebrowserImageUploadUrl: "{% url 'ckeditor_upload' %}",
         removeButtons: 'PasteFromWord'
     });
     //..................................................................................................................................
@@ -596,12 +602,22 @@
         removePlugins: 'sourcearea',
         removeButtons: 'PasteFromWord',
         filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
-        filebrowserImageBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html?type=Images',
-        filebrowserUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Files',
-        filebrowserImageUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Images',
+        filebrowserImageBrowseUrl: "{% url 'ckeditor_browse' %}",
+        filebrowserUploadUrl: "{% url 'ckeditor_upload' %}",
+        filebrowserImageUploadUrl: "{% url 'ckeditor_upload' %}",
         removeButtons: 'PasteFromWord'
     });
     editor_obj['question1']=editor2
+    var editor3 = CKEDITOR.replace('question_1', {
+        removePlugins: 'sourcearea',
+        removeButtons: 'PasteFromWord',
+        filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
+        filebrowserImageBrowseUrl: "{% url 'ckeditor_browse' %}",
+        filebrowserUploadUrl: "{% url 'ckeditor_upload' %}",
+        filebrowserImageUploadUrl: "{% url 'ckeditor_upload' %}",
+        removeButtons: 'PasteFromWord'
+    });
+    editor_objEx['question_1']=editor3
     console.log(editor_obj,editor_obj['question1'])
     function openTextarea(id) {
         console.log(id)
@@ -649,7 +665,9 @@
             </div>
 
             <button type="button" class="btn btn-primary mb-3" onclick="addOption(${questionCount})">Add Option</button>
-
+            <div class="mb-3">
+                <textarea class="form-control" id="question_${questionCount}" name="questions[]" required> </textarea>
+            </div>
             <div class="container_mb">
                 <label for="correctAnswer${questionCount}" class="form-label">Correct Answer</label>
                 <select class="form-select" id="correctAnswer${questionCount}" name="correctAnswers[]" required>
@@ -668,9 +686,9 @@
             removePlugins: 'sourcearea',
             removeButtons: 'PasteFromWord',
             filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
-            filebrowserImageBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html?type=Images',
-            filebrowserUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Files',
-            filebrowserImageUploadUrl: '/apps/ckfinder/3.4.5/core/connector/php/connector.php?command=QuickUpload&type=Images',
+            filebrowserImageBrowseUrl: "{% url 'ckeditor_browse' %}",
+            filebrowserUploadUrl: "{% url 'ckeditor_upload' %}",
+            filebrowserImageUploadUrl: "{% url 'ckeditor_upload' %}",
             removeButtons: 'PasteFromWord'
         });
         editor_obj[`question${questionCount}`]=editor_objs
@@ -680,6 +698,19 @@
             document.getElementById(`displayContent${questionCount}`).innerHTML = editor_objs.getData();
             MathJax.typeset();
         });
+        // Explanition...!
+        addOption(questionCount);
+        var editor_objs1 = CKEDITOR.replace(`question_${questionCount}`, {
+            removePlugins: 'sourcearea',
+            removeButtons: 'PasteFromWord',
+            filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
+            filebrowserImageBrowseUrl: "{% url 'ckeditor_browse' %}",
+            filebrowserUploadUrl: "{% url 'ckeditor_upload' %}",
+            filebrowserImageUploadUrl: "{% url 'ckeditor_upload' %}",
+            removeButtons: 'PasteFromWord'
+        });
+        editor_objEx[`question_${questionCount}`]=editor_objs1
+
         
     }
 
@@ -760,10 +791,11 @@
         questionDivs.forEach((questionDiv, questionIndex) => {
             const questionData = {
                 question: editor_obj[`question${questionDiv.id.at(-1)}`].getData(),
+                explain: editor_objEx[`question_${questionDiv.id.at(-1)}`].getData(),
                 options: [],
                 correctAnswer: document.getElementById(`correctAnswer${questionDiv.id.at(-1)}`).value
             };
-    
+
             const optionsContainer = questionDiv.querySelector(`#optionsContainer${questionDiv.id.at(-1)}`);
             const optionInputs = optionsContainer.querySelectorAll('[id^="option"]');
             console.log(optionInputs)
@@ -862,7 +894,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                window.location.replace("/edit_question/"+data.path);
+                // window.location.replace("/edit_question/"+data.path);
                 // Handle success response from the server
             })
             .catch(error => {

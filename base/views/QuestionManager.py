@@ -53,32 +53,33 @@ def edit_question(request,path):
     for i in mcq_questions:
         if "," in i.copy_qust_path:
             if path in i.copy_qust_path.split(", "):
-                print(i.copy_qust_path, i.id, i.question)
+                print(i.copy_qust_path, i.id, i.question, i.explain,"explain")
                 out_mcq.append(i)
         else:
             if path == i.copy_qust_path:
-                print(i.copy_qust_path, i.id, i.question)
+                print(i.copy_qust_path, i.id, i.question, i.explain, "explain")
                 out_mcq.append(i)
     print(out_mcq)
-    out = {"instructions":mcq_questions[0].instructions,"questions":[{'id':question.id,'question': question.question,'options': question.options,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in out_mcq]}
+    out = {"instructions":mcq_questions[0].instructions,"questions":[{'id':question.id,'question': question.question,'options': question.options,'explain':question.explain,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in out_mcq]}
     print(out,len(out))
     
     
     result = (
         McqQuestionBase.objects
-        .values('copy_qust_path', 'id', 'user_id', 'question', 'image', 'category', 'question_type', 'options', 'correct_answer', 'instructions', 'path', 'last_updated_date')
+        .values('path', 'id', 'user_id', 'question', 'explain', 'image', 'category', 'question_type', 'options', 'correct_answer', 'instructions', 'copy_qust_path', 'last_updated_date')
         .annotate(count=Count('id'))
-        .annotate(copy_qust_path_value=F('copy_qust_path'))
-        .filter(copy_qust_path_value__isnull=False, user_id=request.user)
-        .exclude(copy_qust_path_value__contains=',')  # Exclude items with a comma
-        .annotate(copy_qust_path_values=F('copy_qust_path_value'))
+        .annotate(path_value=F('path'))
+        .filter(path_value__isnull=False, user_id=request.user)
+        .exclude(path=path)
     )
+        # .exclude(copy_qust_path_value__contains=',')  # Exclude items with a comma
 
-    # Group the results by copy_qust_path_value
-    grouped_data = {key: list(group) for key, group in groupby(result, key=lambda x: x['copy_qust_path_value'])}
+    # Group the results by path_value
+    grouped_data = {key: list(group) for key, group in groupby(result, key=lambda x: x['path_value'])}
     # Serialize the questions to JSON format
     if mcq_questions.exists():
-        out = {"instructions":mcq_questions[0].instructions,"questions":[{'id':question.id,'question': question.question,'options': question.options,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in out_mcq]}
+        out = {"instructions":mcq_questions[0].instructions,"questions":[{'id':question.id,'question': question.question,'explain':question.explain,'options': question.options,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in out_mcq]}
+        print(out)
         return render(request, 'question_manager/edit_questions.html', {"path": path, 'mcq_quiz': out,"grouped_data": grouped_data})
     else:
         # Handle the case when no questions are found
@@ -109,8 +110,10 @@ def update_db(request):
         if instructions != '':
             for question_data in questions_data:
                 question_text = question_data.get('question', '')
+                explain = question_data.get('explain', 'Explanation not provided for this question')
                 options = question_data.get('options', [])
                 correct_answer = question_data.get('correctAnswer', '')
+                print(explain, question_text)
 
                 # Construct the options array (remove null values)
                 options = [option for option in options if option is not None]
@@ -124,6 +127,7 @@ def update_db(request):
                     defaults={
                         'instructions': instructions,
                         'options': options,
+                        'explain': explain,
                         'correct_answer': correct_answer,
                         'question_type': 'MCQ',  # You might want to adjust this based on your requirements
                         'category': path.split('.')[1],  # Adjust the category as needed
@@ -134,11 +138,12 @@ def update_db(request):
                 if not created:
                     question.instructions = instructions
                     question.options = options
+                    explain = explain
                     question.correct_answer = correct_answer,
                     question.save()
         obj = McqQuestionBase.objects.all()
         for i in obj:
-            print(i.path,i.copy_qust_path)
+            print(i.path,i.copy_qust_path, i.explain)
 
         return JsonResponse({'success': True, 'message': 'Data received and processed successfully','path':path})
     except Exception as e:
@@ -232,6 +237,7 @@ def handle_questions(request):
         for question_data in questions_data:
             question_id = question_data.get('id', None)
             question_text = question_data.get('question', '')
+            explain = question_data.get('explain', 'Explanation not provided for this question')
             options = question_data.get('options', [])
             correct_answer = question_data.get('correctAnswer', '')
             
@@ -239,12 +245,13 @@ def handle_questions(request):
             # You may need to adjust the category and path values based on your requirements
             category = path.split('.')[1]
             
-            if len(question_text) > 11:
+            if len(question_text) > 9:
                 # Create or update McqQuestionBase instance
                 if question_id and question_id != 'none':
                     # Update existing question
                     question = McqQuestionBase.objects.get(pk=question_id)
                     question.question = question_text
+                    question.explain = explain
                     question.options = options
                     question.correct_answer = correct_answer
                     question.instructions = instructions
@@ -256,6 +263,7 @@ def handle_questions(request):
                     McqQuestionBase.objects.create(
                         user_id=request.user,
                         question=question_text,
+                        explain=explain,
                         options=options,
                         correct_answer=correct_answer,
                         instructions=instructions,
@@ -292,7 +300,7 @@ def handle_para_questions(request):
             # You may need to adjust the category and path values based on your requirements
             category = path.split('.')[1]
             
-            if len(question_text) > 11:
+            if len(question_text) > 9:
 
                 # Create or update McqQuestionBase instance
                 if question_id and question_id != 'none':

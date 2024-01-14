@@ -587,6 +587,9 @@
             </div>
 
             <button type="button" class="btn btn-primary mb-3" onclick="addOption(${questionCount})">Add Option</button>
+            <div class="mb-3">
+                <textarea class="form-control" id="question_${questionCount}" name="questions[]" required> </textarea>
+            </div>
 
             <div class="container_mb">
                 <label for="correctAnswer${questionCount}" class="form-label">Correct Answer</label>
@@ -618,6 +621,17 @@
             document.getElementById(`displayContent${questionCount}`).innerHTML = editor_objs.getData();
             MathJax.typeset();
         });
+
+        var editor_objs1 = CKEDITOR.replace(`question_${questionCount}`, {
+            removePlugins: 'sourcearea',
+            removeButtons: 'PasteFromWord',
+            filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
+            filebrowserImageBrowseUrl: "{% url 'ckeditor_browse' %}",
+            filebrowserUploadUrl: "{% url 'ckeditor_upload' %}",
+            filebrowserImageUploadUrl: "{% url 'ckeditor_upload' %}",
+            removeButtons: 'PasteFromWord'
+        });
+        editor_obj[`question_${questionCount}`]=editor_objs1
         
     }
 
@@ -713,6 +727,7 @@
                 const questionData = {
                     id: document.getElementById(`id_${questionDiv.id.at(-1)}`).value,
                     question: editor_obj[`question${questionDiv.id.at(-1)}`].getData(),
+                    explain: editor_obj[`question_${questionDiv.id.at(-1)}`].getData(),
                     options: [],
                     correctAnswer: document.getElementById(`correctAnswer${questionDiv.id.at(-1)}`).value
                 };
@@ -840,7 +855,10 @@
             </div>
     
             <button type="button" class="btn btn-primary mb-3" onclick="addOption(${questionCount})">Add Option</button>
-    
+            <div class="mb-3">
+                <h5>Explanition :</h5>
+                <textarea class="form-control" id="question_${questionCount}" name="questions[]" required>${questionData.explain}</textarea>
+            </div>
             <div class="container_mb">
                 <label for="correctAnswer${questionCount}" class="form-label">Correct Answer</label>
                 <select class="form-select" id="correctAnswer${questionCount}" name="correctAnswers[]" required>
@@ -870,6 +888,16 @@
             document.getElementById(`displayContent${questionCount}`).innerHTML = editor_objs.getData();
             MathJax.typeset();
         });
+        var editor_objs1 = CKEDITOR.replace(`question_${questionCount}`, {
+            removePlugins: 'sourcearea',
+            removeButtons: 'PasteFromWord',
+            filebrowserBrowseUrl: '/apps/ckfinder/3.4.5/ckfinder.html',
+            filebrowserImageBrowseUrl: "{% url 'ckeditor_browse' %}",
+            filebrowserUploadUrl: "{% url 'ckeditor_upload' %}",
+            filebrowserImageUploadUrl: "{% url 'ckeditor_upload' %}",
+            removeButtons: 'PasteFromWord'
+        });
+        editor_obj[`question_${questionCount}`]=editor_objs1
         
     
         // Populate options
