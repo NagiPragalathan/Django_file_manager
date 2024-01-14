@@ -436,6 +436,10 @@
         {% csrf_token %}
         <!-- Your form fields and other content go here -->
     </form>
+    <form>
+        {% csrf_token %}
+        <!-- Your form fields go here -->
+    </form>
 </div>
 
 <script>
@@ -524,7 +528,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                alert('Your questions have been Importeda and saved to the server successfully!');
+                alert('Your questions have been imported and saved to the server successfully!');
                 window.location.replace("/edit_question/"+data.path);
                 // Handle success response from the server
             })
@@ -596,9 +600,8 @@
                 <select class="form-select" id="correctAnswer${questionCount}" name="correctAnswers[]" required>
                     <!-- Options will be dynamically added -->
                 </select>
-                <button type="button" class="btn btn-danger" onclick="deleteQuestion(${questionCount})">Delete Question</button>
+                <button type="button" class="btn btn-danger" onclick="deleteQuestion(${questionCount},'none')">Delete Question</button>
             </div>
-
         `;
 
         questionsContainer.appendChild(questionDiv);
@@ -670,10 +673,46 @@
         updateCorrectAnswerDropdown(questionNumber);
     }
 
-    function deleteQuestion(questionNumber) {
-        const questionContainer = document.getElementById(`questionContainer${questionNumber}`);
-        questionContainer.remove();
-        updateCorrectAnswerDropdown(questionNumber);
+    function deleteQuestion(questionNumber, id_value) {
+        console.log(id_value)
+        const path = "{{ path }}";
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+        const additionalData = {
+            csrfmiddlewaretoken: csrfToken,  // Include CSRF token if needed
+            path: path,
+            qid:id_value
+        };
+        if( id_value !== 'none'){
+            fetch(`/delete_qust`, {
+                method: 'POST',  // Use POST method
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrfToken,
+                    // Add any other headers as needed
+                },
+                body: JSON.stringify(additionalData),
+                // Add any necessary credentials, mode, etc. options here
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.message);  // Log the success message
+                if (data.question) {
+                    alert(data.message)
+                    location.reload();
+                }
+                // Add any additional logic you need here
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert(data.message)
+                // Add error handling logic if needed
+            });
+        }else{
+            const questionContainer = document.getElementById(`questionContainer${questionNumber}`);
+            questionContainer.remove();
+            updateCorrectAnswerDropdown(questionNumber);
+        }
     }
 
     function updateCorrectAnswerDropdown(questionNumber) {
@@ -864,7 +903,7 @@
                 <select class="form-select" id="correctAnswer${questionCount}" name="correctAnswers[]" required>
                     <!-- Options will be dynamically added -->
                 </select>
-                <button type="button" class="btn btn-danger" onclick="deleteQuestion(${questionCount})">Delete Question</button>
+                <button type="button" class="btn btn-danger" onclick="deleteQuestion(${questionCount},${questionData.id})">Delete Question</button>
             </div>
         `;
     
@@ -972,6 +1011,7 @@
             .then(data => {
                 console.log('Success:', data);
                 alert('Your questions have been saved to the server successfully!');
+                location.reload()
                 // Handle success response from the server
             })
             .catch(error => {

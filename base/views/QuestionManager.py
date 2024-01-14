@@ -34,15 +34,29 @@ def add_para_question(request,path):
     return render(request, 'question_manager/para_create.html',{"path":path})
 
 
-def delete_question(request, question_id):
-    question = get_object_or_404(McqQuestionBase, id=question_id)
-
+@csrf_exempt  # Use this decorator for simplicity; consider using CSRF protection in production
+def delete_question(request):
     if request.method == 'POST':
-        question.delete()
-        return HttpResponse('Question deleted successfully!')
+        data = json.loads(request.body.decode('utf-8'))
+        questions_id = data.get('qid', '')
+        path = data.get('path', '')
+        if questions_id != '':
+            question = get_object_or_404(McqQuestionBase, id=questions_id)
+        else:
+            return JsonResponse({'message': 'Question was not deleted. choose correct question to delete !'})
+            
 
-    context = {'question': question}
-    return render(request, 'delete_question.html', context)
+        if "," in question.copy_qust_path:
+            copy_qust_path = [item.strip() for item in question.copy_qust_path.split(',')]
+            copy_qust_path.remove(path)
+            question.copy_qust_path = ", ".join(copy_qust_path)
+            question.save()
+        else:
+            question.delete()
+
+        return JsonResponse({'message': 'Question deleted successfully!', 'question': questions_id})
+    else:
+        return JsonResponse({'message': 'Question was not deleted!'})
 
 def edit_question(request,path):
     mcq_questions = McqQuestionBase.objects.filter(user_id=request.user)
@@ -362,3 +376,5 @@ def add_image_editor(request):
         # You may want to do additional processing here if needed
         ImageEditor.objects.create(question=question_text)
         return JsonResponse({'message': 'Data processed successfully'}, status=200)
+    
+    

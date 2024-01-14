@@ -47,7 +47,7 @@ question_manager = [
     path('handle_para_questions', handle_para_questions, name='handle_para_questions'),
     path('import_questions', import_questions, name='import_questions'),
     path('get_questions/<str:category>/', get_questions_by_category, name='get_questions_by_category'),
-    path('delete/<int:question_id>', delete_question, name='delete_question'),
+    path('delete_qust', delete_question, name='delete_question'),
     # Add other URL patterns if needed
 ]
 

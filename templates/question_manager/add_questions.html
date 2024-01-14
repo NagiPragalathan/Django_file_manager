@@ -894,7 +894,7 @@
             .then(response => response.json())
             .then(data => {
                 console.log('Success:', data);
-                // window.location.replace("/edit_question/"+data.path);
+                window.location.replace("/edit_question/"+data.path);
                 // Handle success response from the server
             })
             .catch(error => {
