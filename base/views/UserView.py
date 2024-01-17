@@ -1,66 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render
 from base.models import PathManager, FolderManager, McqQuestionBase
 
-def add_data(request):
-    if request.method == 'POST':
-        path = request.POST.get('path')
-        file = request.FILES.get('file')  # Assuming file is submitted in the form
-        title = request.POST.get('title')
-        
-
-        PathManager.objects.create(
-            user_id=request.user,
-            path=path,
-            file=file,
-            category=path.split('.')[1],
-            title=title
-        )
-            
-        sample = PathManager.objects.filter(user_id=request.user)
-        for i in sample:
-            print(i.path,i.file)
-
-        return redirect('list_folders',path=path)  # Redirect to the list_data view after successful submission
-
-    return render(request, 'file_manager/add_data.html')
-
-def list_data(request):
-    data_entries = PathManager.objects.all()
-    return render(request, 'file_manager/list_data.html', {'data_entries': data_entries})
-
-
-
-def add_folder(request):
-    if request.method == 'POST':
-        folder_name = request.POST.get('folder_name')
-        category = request.POST.get('category')
-        path = request.POST.get('path')
-        description = request.POST.get('description','No description is provided for this course')
-        
-        print("category", category, "title",folder_name)
-
-        if path == 'root':
-            FolderManager.objects.create(
-                user_id=request.user,
-                FolderName=folder_name,
-                category=folder_name,
-                description=description,
-                path=path
-            )
-        else:
-            FolderManager.objects.create(
-                user_id=request.user,
-                FolderName=folder_name,
-                description=description,
-                category=path.split('.')[1],
-                path=path
-            )
-
-        return redirect('list_folders',path=path)  # Redirect to the list_folders view after successful submission
-
-    return render(request, 'file_manager/add_folder.html')
-
-def list_folders(request, path):
+def ListCourse(request, path):
     user = request.user
     temp = []
     temp1=[]
@@ -108,9 +49,32 @@ def list_folders(request, path):
     for i,j in zip(path_list,path.split('.')):
         out_path[j] = i
     
-        
-    print(category)
-    
-    return render(request, 'file_manager/Manager.html', {'path':path,'path_alter':path.replace(".", "/"),
+    if path == 'root':
+        return render(request, 'UserView/ListCourse.html', {'path':path,'path_alter':path.replace(".", "/"),
                                                          'path_list':out_path,'folders': folders, 'files': Files,
                                                          'category':category, 'mcq':temp,'mcq_para':temp1})
+    else:
+        return render(request, 'UserView/ListCourse_Folder.html', {'path':path,'path_alter':path.replace(".", "/"),
+                                                         'path_list':out_path,'folders': folders, 'files': Files,
+                                                         'category':category, 'mcq':temp,'mcq_para':temp1})
+        
+def take_quiz(request, path):
+    mcq_questions = McqQuestionBase.objects.filter(user_id=request.user)
+    out_mcq = []
+    for i in mcq_questions:
+        if "," in i.copy_qust_path:
+            if path in i.copy_qust_path.split(", "):
+                out_mcq.append(i)
+        else:
+            if path == i.copy_qust_path:
+                out_mcq.append(i)
+    questions = []
+    options = []
+
+    out = {"instructions":mcq_questions[0].instructions,"questions":[{'id':question.id,'question': question.question,'options': question.options,'explain':question.explain,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in out_mcq]}
+    for question in out_mcq:
+        questions.append(question.question)
+        options.append(question.options)
+    print(questions, options)
+    return render(request, "UserView/TakeQuiz.html",{'questions':questions,'options':options})
+

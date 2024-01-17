@@ -322,6 +322,38 @@
     
 </style>
 <body>
+    <nav style="position: sticky; top: 0; z-index: 999;" class="navbar navbar-expand-lg navbar-light bg-light">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    <button type="submit" class="btn btn-primary" onclick="submit_data()">Submit Quiz</button>
+                </li>
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Tools
+                    </a>
+                    <div class="dropdown-menu" style="" aria-labelledby="navbarDropdown">
+                        <button type="button" style="border-radius: 7px; background: #f7f8f8; border: 2px solid #d6d6d6; font-size: 11px; width: 100%;" onclick="copySelectedQuestions()">Copy Selected Questions</button>
+                        {% comment %} <button type="button" style="border-radius: 7px; background: #f7f8f8; border: 2px solid #d6d6d6; font-size: 11px; width: 100%;" onclick="pasteCopiedQuestions()">Paste Copied Questions</button> {% endcomment %}
+                        <div class="dropdown-divider"></div>
+                        <button type="button" style="border-radius: 7px; background: #f7f8f8; color:black; border: 2px solid #d6d6d6; font-size: 11px; width: 100%;" class="btn btn-primary" onclick="getQuizData1()">Get Quiz Data (JSON)</button>    
+                    </div>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link disabled" href="{% url 'list_folders' path='root' %}">Root</a>
+                </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <a href="{% url 'list_folders' path=path %}">
+                    <button class="btn btn-outline-danger my-2 my-sm-0" type="button">Back</button>
+                </a>
+            </form>
+        </div>
+    </nav>
 <div class="container mt-5">
     <h2>Paragraph Type</h2>
 
@@ -370,13 +402,8 @@
 
     <button type="button" class="btn btn-success mb-3" onclick="addQuestion()">Add New Question</button>
 
-    <div class="mb-3">
-        <button type="button" class="btn btn-primary" onclick="copySelectedQuestions()">Copy Selected Questions</button>
-        <button type="button" class="btn btn-primary" onclick="pasteCopiedQuestions()">Paste Copied Questions</button>
-        <button type="submit" class="btn btn-primary" onclick="submit_data()">Submit Quiz</button>
-        <button type="button" class="btn btn-primary" onclick="getQuizData()">Get Quiz Data (JSON)</button>    
+    <div class="mb-3">  
         <!-- Add this button where you want to trigger the import -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#importQuestionsModal">Import Questions</button>
 
         <!-- The modal structure -->
         <div class="modal fade" id="importQuestionsModal" tabindex="-1" role="dialog" aria-labelledby="importQuestionsModalLabel" aria-hidden="true">
@@ -615,6 +642,45 @@
         console.log(JSON.stringify(quizData, null, 2));
         return quizData
     }
+    function getQuizData1() {
+        const quizData = {
+            instructions: editor_inst.getData(),
+            questions: []
+        };
+    
+        const questionsContainer = document.getElementById('questionsContainer');
+        const questionDivs = questionsContainer.querySelectorAll('[id^="questionContainer"]');
+        
+        questionDivs.forEach((questionDiv, questionIndex) => {
+            try{
+                const questionData = {
+                    id: document.getElementById(`id_${questionDiv.id.at(-1)}`).value,
+                    question: editor_obj[`question${questionDiv.id.at(-1)}`].getData(),
+                    options: [],
+                    correctAnswer: document.getElementById(`correctAnswer${questionDiv.id.at(-1)}`).value
+                };
+        
+                const optionsContainer = questionDiv.querySelector(`#optionsContainer${questionDiv.id.at(-1)}`);
+                const optionInputs = optionsContainer.querySelectorAll('[id^="option"]');
+        
+                optionInputs.forEach((optionInput) => {
+                    if(optionInput.value !== undefined){
+                        questionData.options.push(optionInput.value);
+                    }
+                });
+        
+                quizData.questions.push(questionData);
+            }catch{
+                console.log('err')
+            }
+        });
+    
+        // Display the JSON data in the console
+        console.log(JSON.stringify(quizData, null, 2));
+        alert(JSON.stringify(quizData, null, 2))
+        return quizData
+    }
+
 
     function copySelectedQuestions() {
         selectedQuestions = [];

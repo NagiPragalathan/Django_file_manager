@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Title | Quiz - MyGURUPLUS</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .navbar {
+            background-color: #3498db;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .navbar a {
+            text-decoration: none;
+            color: white;
+            margin: 0 10px;
+        }
+
+        .header {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .container {
+            display: flex;
+            /* justify-content: space-between; */
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .question-container {
+            width: 70%;
+            margin-right: 20px;
+        }
+
+        .calendar-container {
+            width: 25%;
+            margin: 30px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-gap: 0px;
+        }
+
+        .question {
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+
+        .options {
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .option {
+            margin-bottom: 10px;
+            transition: background-color 0.3s ease-in-out; /* Added transition effect */
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        .option.selected {
+            background-color: #3498db; /* Blue color for selected option */
+            color: #fff; /* White text for selected option */
+        }
+
+        .option.correct {
+            background-color: #4caf50; /* Green color for correct option */
+            color: #fff;
+        }
+
+        .option.incorrect {
+            background-color: #f44336; /* Red color for incorrect option */
+            color: #fff;
+        }
+
+        button {
+            padding: 10px;
+            margin-top: 10px;
+            cursor: pointer;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+        }
+
+        .calendar {
+            margin-top: 30px;
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .calendar-square {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .square-answered {
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: #4caf50;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .square-unanswered {
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: #f44336;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.3s ease-in-out;
+        }
+
+        .answered {
+            background-color: #4caf50;
+        }
+
+        .unanswered {
+            background-color: #f44336;
+        }
+
+        .quiz-completed {
+            text-align: center;
+            font-size: 24px;
+            color: #333;
+            margin-top: 20px;
+        }
+
+        @media only screen and (max-width: 1000px) {
+            .calendar-container {
+                width: auto;
+                margin: 10px auto;
+                background-color: #fff;
+                padding: 20px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                grid-gap: 5px;
+            }
+
+        }
+
+        @media only screen and (max-width: 800px) {
+            .calendar-container {
+                width: auto;
+                margin: 10px auto;
+                background-color: #fff;
+                padding: 3px;
+                border-radius: 10px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+                display: grid;
+                grid-template-columns: repeat(8, 1fr);
+                grid-gap: 0px;
+            }
+
+            .container {
+                display: flex;
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1 class="display-4 fw-bold">Myguruplus Practice</h1>
+        <p class="fs-5">These are model questions to Crack the TNPSC.</p>
+    </div>
+    <div class="d-flex justify-content-around w-auto mx-5 bg-gradient py-2 border border-success rounded fw-semibold fs-6 ">
+        <div class="d-flex">
+            <span class="square-answered"></span>
+            <span class="fs-5">Answered questions</span>
+        </div>
+        <div class="d-flex">
+            <span class="square-unanswered"></span>
+            <span class="fs-5">Not answered questions</span>
+        </div>
+
+    </div>
+    <div class="container d-flex ">
+        <div class="question-container">
+            <div class="d-flex justify-content-around w-100 bg-secondary bg-gradient py-2 border border-success rounded fw-semibold fs-6 mb-5">
+                <span class="fs-5" id="Date"></span>
+                <span class="fs-5" id="timer">10:00</span>
+            </div>
+
+            <div id="quiz-container" class="px-3">
+                <div id="question" class="question fs-5 fw-semibold"></div>
+                <div class="options mx-3 fs-6" id="options-container"></div>
+                <div class=" d-flex justify-content-between mb-5">
+                    <button class="px-3 fw-semibold" onclick="previousQuestion()">Previous</button>
+                    <button class="px-3 fw-semibold" onclick="nextQuestion()">Next</button>
+                </div>
+                <div id="status"></div>
+            </div>
+
+            <div id="quiz-completed" class="quiz-completed">
+                <!-- Quiz completion message will be displayed here -->
+            </div>
+        </div>
+
+        <div class="calendar-container" id="calendar">
+            <!-- Dynamically generate calendar squares based on the total number of questions -->
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ENjdO4Dr2bkBIFxQpeoTz1HIcje39Wm4jDKdf19U8gI4ddQ3GYNS7NTKfAdVQSZe"
+        crossorigin="anonymous"></script>
+
+        <script>
+            const totalQuestions = {{ questions|length }};
+            let currentQuestion = 1;
+        
+            document.addEventListener('DOMContentLoaded', () => {
+                generateCalendar();
+                updateStatus();
+                showQuestion(currentQuestion);
+            });
+        
+            function nextQuestion() {
+                const selectedOption = document.querySelector('input[name="q' + currentQuestion + '"]:checked');
+        
+                markCalendarSquare(currentQuestion, selectedOption ? 'answered' : 'unanswered');
+        
+                currentQuestion++;
+                updateStatus();
+        
+                if (currentQuestion <= totalQuestions) {
+                    showQuestion(currentQuestion);
+                } else {
+                    endQuiz();
+                }
+            }
+        
+            function previousQuestion() {
+                currentQuestion--;
+        
+                updateStatus();
+        
+                if (currentQuestion >= 1) {
+                    showQuestion(currentQuestion);
+                } else {
+                    currentQuestion = 1;
+                }
+            }
+        
+            function showQuestion(questionNumber) {
+                const questionElement = document.getElementById('question');
+                const optionsContainer = document.getElementById('options-container');
+            
+                const questions = {{ questions|safe }}
+            
+                const options = {{ options|safe }}
+            
+                questionElement.innerHTML = `<p>Question ${questionNumber}: ${questions[questionNumber - 1]}</p>`;
+            
+                optionsContainer.innerHTML = '';
+            
+                options[questionNumber - 1].forEach((option, index) => {
+                    const radioInput = document.createElement('input');
+                    radioInput.type = 'radio';
+                    radioInput.name = `q${questionNumber}`;
+                    radioInput.value = option;
+            
+                    const optionElement = document.createElement('div');
+                    optionElement.className = 'option';
+                    optionElement.innerHTML = `<label>${option}</label>`;
+                    optionElement.appendChild(radioInput);
+            
+                    optionElement.addEventListener('click', () => {
+                        radioInput.checked = true;
+                        markSelectedOption(optionElement);
+                    });
+            
+                    optionsContainer.appendChild(optionElement);
+                });
+            }
+            
+        
+            function markSelectedOption(optionElement) {
+                const allOptions = document.querySelectorAll('.option');
+                allOptions.forEach(opt => opt.classList.remove('selected'));
+        
+                optionElement.classList.add('selected');
+            }
+        
+            function updateStatus() {
+                const statusElement = document.getElementById('status');
+                statusElement.textContent = `Question ${currentQuestion - 1} of ${totalQuestions} answered`;
+            }
+        
+            function endQuiz() {
+                const quizContainer = document.getElementById('quiz-container');
+                quizContainer.innerHTML = '<h2>Quiz Completed!</h2><p>Thank you for participating.</p>';
+            }
+        
+            function generateCalendar() {
+                const calendarContainer = document.getElementById('calendar');
+        
+                for (let i = 1; i <= totalQuestions; i++) {
+                    const square = document.createElement('div');
+                    square.className = 'calendar-square';
+                    square.textContent = i;
+        
+                    square.addEventListener('click', () => {
+                        currentQuestion = i;
+                        showQuestion(currentQuestion);
+                        updateStatus();
+                    });
+        
+                    calendarContainer.appendChild(square);
+                }
+            }
+        
+            const answeredQuestions = new Set(); // Track answered questions
+        
+            function markCalendarSquare(questionNumber, status) {
+                const square = document.querySelector('.calendar-square:nth-child(' + questionNumber + ')');
+        
+                if (status === 'answered') {
+                    square.classList.add('answered');
+                    square.classList.remove('unanswered');
+                    answeredQuestions.add(questionNumber);
+                } else if (status === 'unanswered') {
+                    square.classList.add('unanswered');
+                    square.classList.remove('answered');
+                    answeredQuestions.delete(questionNumber);
+                }
+        
+                updateSquareStyles(questionNumber);
+            }
+        
+            function updateSquareStyles(questionNumber) {
+                const square = document.querySelector('.calendar-square:nth-child(' + questionNumber + ')');
+        
+                if (answeredQuestions.has(questionNumber)) {
+                    square.classList.add('answered');
+                    square.classList.remove('unanswered');
+                } else {
+                    square.classList.add('unanswered');
+                    square.classList.remove('answered');
+                }
+            }
+        
+            // Get the current date and time
+            const currentDate = new Date();
+        
+            // Define an array of month names
+            const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+        
+            // Get individual components of the date and time
+            const month = monthNames[currentDate.getMonth()]; // Get month name from the array
+            const date = currentDate.getDate();
+            const year = currentDate.getFullYear();
+            let hours = currentDate.getHours();
+            const minutes = currentDate.getMinutes();
+            const seconds = currentDate.getSeconds();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+        
+            // Convert hours to 12-hour format
+            hours = hours % 12;
+            hours = hours ? hours : 12;
+        
+            // Format the date and time as a string
+            const formattedDateTime = `${month} ${date < 10 ? '0' + date : date}, ${year} ${hours < 10 ? '0' + hours : hours}:${minutes < 10 ? '0' + minutes : minutes} ${ampm}`;
+        
+            document.getElementById('Date').innerText = ` ${formattedDateTime}`;
+        
+            let s = 600; // Initial time in seconds
+        
+            function update() {
+                const m = Math.floor(s / 60);
+                const sec = s % 60;
+                const formattedTime = `${m}:${sec < 10 ? '0' + sec : sec}`;
+                document.getElementById('timer').innerText = formattedTime;
+            }
+        
+            function start() {
+                update();
+                const interval = setInterval(function () {
+                    if (s > 0) {
+                        s--;
+                        update();
+                    } else {
+                        clearInterval(interval);
+                    }
+                }, 1000);
+            }
+            window.onload = start;
+        </script>
+        
+</body>
+
+</html>

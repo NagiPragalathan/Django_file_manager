@@ -8,6 +8,7 @@ from QuizApp import settings
 from base.views.auth import *
 from base.views.common import *
 from base.views.FileManagement import *
+from base.views.UserView import *
 from base.views.QuestionManager import *
 
 urlpatterns = []
@@ -51,12 +52,18 @@ question_manager = [
     # Add other URL patterns if needed
 ]
 
+UserView = [
+    path('list_course/<str:path>', ListCourse, name='list_course'),
+    path('take_quiz/<str:path>', take_quiz, name='take_quiz'),
+    
+]
+
 urlpatterns.extend(admin_)
 urlpatterns.extend(auth)
 urlpatterns.extend(common)
 urlpatterns.extend(file_manager)
 urlpatterns.extend(question_manager)
+urlpatterns.extend(UserView)
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
