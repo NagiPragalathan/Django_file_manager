@@ -35,7 +35,9 @@ def add_folder(request):
         folder_name = request.POST.get('folder_name')
         category = request.POST.get('category')
         path = request.POST.get('path')
+        file = request.FILES.get('file')  # Assuming file is submitted in the form
         description = request.POST.get('description','No description is provided for this course')
+        cost = request.POST.get('cost','0')
         
         print("category", category, "title",folder_name)
 
@@ -44,7 +46,9 @@ def add_folder(request):
                 user_id=request.user,
                 FolderName=folder_name,
                 category=folder_name,
+                FolderImage = file,
                 description=description,
+                cost=cost,
                 path=path
             )
         else:
@@ -52,6 +56,8 @@ def add_folder(request):
                 user_id=request.user,
                 FolderName=folder_name,
                 description=description,
+                FolderImage = file,
+                cost=cost,
                 category=path.split('.')[1],
                 path=path
             )

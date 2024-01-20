@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Report</title>
+</head>
+<body>
+    <h1>Update Report</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="message">Message:</label>
+        <textarea name="message" required>{{ report.message }}</textarea><br>
+
+        <label for="flag">Flag:</label>
+        <input type="text" name="flag" value="{{ report.flag }}" required><br>
+
+        <button type="submit">Update</button>
+    </form>
+</body>
+</html>

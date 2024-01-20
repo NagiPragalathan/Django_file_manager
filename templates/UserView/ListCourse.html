@@ -40,9 +40,7 @@
 					</li>
 				</ul>
 				<form class="d-flex" role="search">
-					<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-					<button class="btn btn-outline-success" type="submit">Search</button>
-					<a href="./login.html" class="btn btn-primary ms-2">Login</a>
+					<button class="btn btn-outline-success" type="submit">Upgrade Premium </button>
 				</form>
 			</div>
 		</div>
@@ -54,18 +52,12 @@
 
 	<div class="container">
 		<div class="d-flex">
-			<a href="./all-quiz.html" class="btn btn-light me-2" style="font-family: Helvetica,Sans-serif;color:black">SKILL	</a>
-			<a href="./all-quiz.html" class="btn btn-light me-2" style="font-family: Helvetica,Sans-serif;color:black">TNPSC🎯	</a>
-			<a href="./all-quiz.html" class="btn btn-light me-2" style="font-family: Helvetica,Sans-serif;color:black">IQ	</a>
-			
-		
+			<a class="btn btn-light me-2" style="font-family: Helvetica,Sans-serif;color:black; background: #e4e4e4;">All courses</a>
+			<a class="btn btn-light me-2" style="font-family: Helvetica,Sans-serif;color:black; background: #e4e4e4;">Enrolled courses</a>
+			<a class="btn btn-light me-2" style="font-family: Helvetica,Sans-serif;color:black; background: #e4e4e4;">Free courses</a>
 		</div>
+		<hr/>
 	</div>
-
-	<form class="container d-flex my-4" role="search">
-		<input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-		<a href="#" type="submit" class="btn btn-primary ms-2">Search</a>
-	</form>
 
 	<div class="container" style="margin-bottom: 20px;">
 
@@ -73,13 +65,22 @@
             {% for i in folders %}
             <div class="col">
                 <div class="card shadow-sm h-100">
+						<img src="{{ i.FolderImage.url }}" style="padding: 15px; border-radius: 25px;" />
                     <div class="card-body d-flex flex-column">
                         <h4>{{ i.FolderName }}</h4>
-                        <p class="card-text">Total Questions - 10</p>
-                        <p class="card-text">{{ i.description }}</p>
+						{% if i.cost == 0 %}
+                        <p class="card-text" style="border: 1px solid #a2a2a2; width: fit-content; padding: 1px 13px; background: #c2ffe0; border-radius: 11px;">Free</p>
+						{% else %}
+                        <p class="card-text" style="border: 1px solid #a2a2a2; width: fit-content; padding: 1px 13px; background: #e2e2e2; border-radius: 11px;">{{ i.cost }} ₹</p>
+						{% endif %}
+                        <p class="card-text" style="text-align: justify;">{{ i.description }}</p>
                         <div class="d-flex justify-content-between align-items-center mt-auto">
                             <div class="btn-group">
-                                <a href="/list_course/root.{{ i.FolderName }}" type="button" class="btn btn-sm btn-outline-success">Take step</a>
+								{% if i.cost == 0 %}
+                                	<a href="/list_course/root.{{ i.FolderName }}" type="button" class="btn btn-sm btn-outline-success">Take step</a>
+								{% else %}
+                                	<a href="/list_course/root.{{ i.FolderName }}" type="button" style="font-size: 13px;" class="btn btn-sm btn-outline-success">Upgrade Premium</a>
+								{% endif %}
                             </div>
                             <small class="text-body-secondary">{{ i.updated_date }}</small>
                         </div>

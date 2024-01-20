@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from base.models import PathManager, FolderManager, McqQuestionBase
+from django.db.models import Count
 
 def ListCourse(request, path):
     user = request.user
@@ -59,7 +60,12 @@ def ListCourse(request, path):
                                                          'category':category, 'mcq':temp,'mcq_para':temp1})
         
 def take_quiz(request, path):
-    mcq_questions = McqQuestionBase.objects.filter(user_id=request.user)
+    mcq_questions = McqQuestionBase.objects.filter(user_id=request.user, question_type="MCQ")
+    mcq_questions_para = McqQuestionBase.objects.filter(
+        user_id=request.user,
+        question_type="PARA",
+        path=path 
+    )   
     out_mcq = []
     for i in mcq_questions:
         if "," in i.copy_qust_path:
@@ -70,11 +76,35 @@ def take_quiz(request, path):
                 out_mcq.append(i)
     questions = []
     options = []
+    correctAnswer = []
+    question_ids = []
 
-    out = {"instructions":mcq_questions[0].instructions,"questions":[{'id':question.id,'question': question.question,'options': question.options,'explain':question.explain,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in out_mcq]}
+    # out = {"instructions":mcq_questions[0].instructions,"questions":[{'id':question.id,'question': question.question,'options': question.options,'explain':question.explain,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in out_mcq]}
     for question in out_mcq:
         questions.append(question.question)
         options.append(question.options)
-    print(questions, options)
-    return render(request, "UserView/TakeQuiz.html",{'questions':questions,'options':options})
+        man = question.correct_answer[-1]
+        correctAnswer.append(question.options[int(man)-1])
+        question_ids.append(question.id)
+    # print(questions, options, correctAnswer)
+    grouped_questions = mcq_questions_para.values('quest_id').annotate(total_questions=Count('id')) 
+
+    # Now, `grouped_questions` contains the quest_id and the total count of questions for each quest_id
+    for group in grouped_questions:
+        obj = McqQuestionBase.objects.filter(
+            quest_id=group['quest_id'],
+            user_id=request.user
+        )
+        for i in obj:
+            questions.append([i.question,i.instructions])
+            options.append(i.options)
+            man = i.correct_answer[-1]
+            correctAnswer.append(i.options[int(man)-1])
+            question_ids.append(i.id)
+            
+        print("obj: ", obj)
+        quest_id = group['quest_id']
+        total_questions = group['total_questions']
+        print(f"Quest ID: {quest_id}, Total Questions: {total_questions}", correctAnswer)
+    return render(request, "UserView/TakeQuiz.html",{'questions':questions,'options':options, 'answers':correctAnswer, 'question_ids':question_ids})
 

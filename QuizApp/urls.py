@@ -10,6 +10,7 @@ from base.views.common import *
 from base.views.FileManagement import *
 from base.views.UserView import *
 from base.views.QuestionManager import *
+from base.views.Report import *
 
 urlpatterns = []
 
@@ -58,12 +59,20 @@ UserView = [
     
 ]
 
+report = [
+    path('create_report/<int:question_id>', create_report, name='create_report'),
+    path('list_report', list_reports, name='list_reports'),
+    path('update_report/<int:report_id>/', update_report, name='update_report'),
+    path('delete_report/<int:report_id>/', delete_report, name='delete_report'),
+]
+
 urlpatterns.extend(admin_)
 urlpatterns.extend(auth)
 urlpatterns.extend(common)
 urlpatterns.extend(file_manager)
 urlpatterns.extend(question_manager)
 urlpatterns.extend(UserView)
+urlpatterns.extend(report)
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

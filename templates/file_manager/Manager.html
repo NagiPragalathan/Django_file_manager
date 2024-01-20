@@ -52,12 +52,19 @@
                                         <div class="flex items-center justify-center min-h-screen">
                                             <div class="bg-white p-4 rounded shadow-lg">
                                                 <h2 class="text-lg font-semibold mb-4">Create Folder</h2>
-                                                <form method="post" action="{% url 'add_folder' %}">
+                                                <form method="post" action="{% url 'add_folder' %}" enctype="multipart/form-data">
                                                     {% csrf_token %}
-                                                    <label for="folder_name" class="block text-sm font-medium text-gray-700">Folder Name:</label>
+                                                    <label for="folder_name" class="block text-sm font-medium text-gray-700">Folder Name: <span style="color:red">*</span></label>
                                                     <input type="text" id="folder_name" name="folder_name" class="mt-1 p-2 border rounded-md w-full" required>
                                                     
-                                                    <label for="description" class="block text-sm font-medium text-gray-700">Discription:</label>
+                                                    {% if path == 'root' %}
+                                                        <label for="file" class="block text-sm font-medium text-gray-700">Folder Image:</label>
+                                                        <input type="file" id="file" name="file" accept="image/*" class="mt-1 p-2 border rounded-md w-full">
+                                                        
+                                                        <label for="cost" class="block text-sm font-medium text-gray-700">Cost:</label>
+                                                        <input type="number" id="cost" name="cost" class="mt-1 p-2 border rounded-md w-full">
+                                                    {% endif %}
+                                                    <label for="description" class="block text-sm font-medium text-gray-700">Discription: <span style="color:red">*</span></label>
                                                     <input type="text" id="description" name="description" class="mt-1 p-2 border rounded-md w-full" required>
                                                     
                                                     {% comment %} {% if path != 'root' %}
@@ -230,7 +237,6 @@
 															<div>
 																<img src="{{ i.icon }}"/>
 															</div>
-
 														</div>
 														<div class="flex mt-3" style="display: flex;justify-content: space-between;">
 															<div class="overflow-hidden me-auto">
@@ -245,14 +251,13 @@
 									{% endfor %}
                                     {% for i in mcq_para %}
 										<div class="relative flex flex-col min-w-0 rounded break-words border bg-white border-1 border-gray-300 shadow-none border">
-											<a href="/para_edit_question/{{path}}">
+											<a href="/para_edit_question/{{path}}/{{ i.name }}">
 												<div class="flex-auto p-6 p-6">
 													<div style="display: flex; flex-direction: column; height: 100%; justify-content: space-around; align-items: flex-start;">
 														<div class="flex justify-between items-center">
 															<div>
 																<img src="{{ i.icon }}"/>
 															</div>
-
 														</div>
 														<div class="flex mt-3" style="display: flex;justify-content: space-between;">
 															<div class="overflow-hidden me-auto">

@@ -35,6 +35,8 @@ class FolderManager(models.Model):
     FolderName = models.CharField(max_length=255)
     category = models.CharField(max_length=50)
     path = models.CharField(max_length=400)
+    cost = models.IntegerField(default=0)
+    FolderImage = models.FileField(upload_to='Folder_profile_img/')
     description = models.TextField(default="No description is provided for this course", null=True, blank=True)
     updated_date = models.DateTimeField(auto_now=True)
 
@@ -68,4 +70,14 @@ class McqQuestionBase(models.Model):
                 self.copy_qust_path = ', '.join(paths)
             super().save(*args, **kwargs)
             
-            
+class UserSubscription(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    is_premium  = models.CharField(max_length=255)
+    
+class Report(models.Model):
+    id = models.AutoField(primary_key=True)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    message  = models.TextField(max_length=255)
+    question_id = models.IntegerField()
+    flag =  models.CharField(max_length=50)

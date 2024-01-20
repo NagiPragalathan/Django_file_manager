@@ -59,7 +59,7 @@ def delete_question(request):
         return JsonResponse({'message': 'Question was not deleted!'})
 
 def edit_question(request,path):
-    mcq_questions = McqQuestionBase.objects.filter(user_id=request.user)
+    mcq_questions = McqQuestionBase.objects.filter(user_id=request.user, question_type="MCQ")
     out_mcq = []
     for i in mcq_questions:
         print(i.copy_qust_path, i.id, i.question)
