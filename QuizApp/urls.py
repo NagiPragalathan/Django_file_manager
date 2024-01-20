@@ -11,6 +11,7 @@ from base.views.FileManagement import *
 from base.views.UserView import *
 from base.views.QuestionManager import *
 from base.views.Report import *
+from base.views.Time_config import *
 
 urlpatterns = []
 
@@ -66,6 +67,14 @@ report = [
     path('delete_report/<int:report_id>/', delete_report, name='delete_report'),
 ]
 
+time_config = [
+    path('config_list/<str:path>', config_list, name='config_list'),
+    path('create_config/<str:path>', create_config, name='create_config'),
+    path('update_config/<int:config_id>/<str:path>', update_config, name='update_config'),
+    path('delete_config/<int:config_id>/<str:path>', delete_config, name='delete_config'),
+]
+
+
 urlpatterns.extend(admin_)
 urlpatterns.extend(auth)
 urlpatterns.extend(common)
@@ -73,6 +82,7 @@ urlpatterns.extend(file_manager)
 urlpatterns.extend(question_manager)
 urlpatterns.extend(UserView)
 urlpatterns.extend(report)
+urlpatterns.extend(time_config)
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

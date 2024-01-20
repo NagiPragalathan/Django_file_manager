@@ -29,29 +29,34 @@
             box-sizing: border-box;
         }
 
-        ul#reportList {
-            list-style-type: none;
-            padding: 0;
+        #filter {
+            margin-bottom: 20px;
         }
 
-        li.reportItem {
-            background-color: #fff;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
             border: 1px solid #ddd;
             padding: 15px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            text-align: left;
         }
 
-        li.reportItem a {
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+
+        td a {
             text-decoration: none;
             margin-right: 10px;
             padding: 8px 15px;
             cursor: pointer;
         }
 
-        li.reportItem a button {
+        td a button {
             background-color: #3498db;
             color: white;
             border: none;
@@ -60,15 +65,18 @@
             border-radius: 5px;
         }
 
-        li.reportItem a button:hover {
+        td a button:hover {
             background-color: #2980b9;
         }
-
-        #search {
-            width: 100%;
-            padding: 8px;
+        #filter {
             margin-bottom: 20px;
-            box-sizing: border-box;
+        }
+
+        #flagFilter {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -78,27 +86,66 @@
     <label for="search">Search:</label>
     <input type="text" id="search" placeholder="Enter keyword">
 
-    <ul id="reportList">
-        {% for report in reports %}
-            <li class="reportItem">
-                {{ report.message }} (Flag: {{ report.flag }}) - 
-                <a href="{% url 'update_report' report.id %}"><button>Update</button></a>
-                <a href="{% url 'delete_report' report.id %}"><button>Delete</button></a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div id="filter">
+        <label for="flagFilter">Filter by Flag:</label>
+        <select id="flagFilter">
+            <option value="">All</option>
+            <option value="true">True</option>
+            <option value="false">False</option>
+        </select>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Message</th>
+                <th>Flag</th>
+                <th>View</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody id="reportList">
+            {% for report in reports %}
+                <tr class="reportItem">
+                    <td>{{ report.message }}</td>
+                    <td>{{ report.flag }}</td>
+                    <td>
+                        {% if report.type == "MCQ" %}
+                            <a href="{% url 'edit_question' report.q_path %}"><button>View</button></a>
+                        {% else %}
+                            <a href="{% url 'para_edit_question' path=report.q_path cat=report.quest_id %}"><button>View</button></a>
+                        {% endif %}
+                    </td>
+                    <td><a href="{% url 'update_report' report.id %}"><button>Update</button></a></td>
+                    <td><a href="{% url 'delete_report' report.id %}"><button>Delete</button></a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     <script>
-        document.getElementById('search').addEventListener('input', function() {
-            const searchKeyword = this.value.toLowerCase();
-            const items = document.querySelectorAll('#reportList li');
-
-            items.forEach(function(item) {
-                const textContent = item.textContent.toLowerCase();
-                const isMatch = textContent.includes(searchKeyword);
-                item.classList.toggle('hidden', !isMatch);
-            });
-        });
+            const searchInput = document.getElementById('search');
+            const flagFilter = document.getElementById('flagFilter');
+            const rows = document.querySelectorAll('#reportList tr');
+        
+            searchInput.addEventListener('input', applyFilters);
+            flagFilter.addEventListener('change', applyFilters);
+        
+            function applyFilters() {
+                const searchKeyword = searchInput.value.toLowerCase();
+                const selectedFlag = flagFilter.value.toLowerCase();
+        
+                rows.forEach(function(row) {
+                    const message = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                    const flag = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        
+                    const isSearchMatch = message.includes(searchKeyword);
+                    const isFlagMatch = selectedFlag === '' || flag === selectedFlag;
+        
+                    row.style.display = (isSearchMatch && isFlagMatch) ? 'table-row' : 'none';
+                });
+            }
     </script>
 </body>
 </html>

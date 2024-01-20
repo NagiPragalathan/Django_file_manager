@@ -70,10 +70,10 @@ def list_folders(request, path):
     user = request.user
     temp = []
     temp1=[]
-    Files = PathManager.objects.filter(user_id=user, path=path)
-    folders = FolderManager.objects.filter(user_id=user, path=path).order_by('FolderName')
-    mcq_questions = McqQuestionBase.objects.filter(user_id=user, path=path, question_type="MCQ")
-    para_mcq_questions = McqQuestionBase.objects.filter(user_id=user, path=path, question_type="PARA")
+    Files = PathManager.objects.filter(path=path)
+    folders = FolderManager.objects.filter(path=path).order_by('FolderName')
+    mcq_questions = McqQuestionBase.objects.filter(path=path, question_type="MCQ")
+    para_mcq_questions = McqQuestionBase.objects.filter(path=path, question_type="PARA")
     unique_para_categories_list = list(para_mcq_questions.values_list('quest_id', flat=True).distinct())
     unique_categories_list = list(mcq_questions.values_list('category', flat=True).distinct())
     Files = sorted(Files, key=lambda x: x.file.name)
@@ -87,7 +87,7 @@ def list_folders(request, path):
         file.type = file_extension
         file.title_name = file.title + "." + file_extension
     
-    category = [i.FolderName for i in FolderManager.objects.filter(user_id=user, path="root").order_by('FolderName')]
+    category = [i.FolderName for i in FolderManager.objects.filter(path="root").order_by('FolderName')]
 
     for i in unique_categories_list:
         print(i)

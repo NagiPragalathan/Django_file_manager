@@ -70,6 +70,14 @@ class McqQuestionBase(models.Model):
                 self.copy_qust_path = ', '.join(paths)
             super().save(*args, **kwargs)
             
+
+            
+class Config(models.Model):
+    id = models.AutoField(primary_key=True)
+    q_path = models.CharField(max_length=255)
+    time_mis  = models.CharField(max_length=255)
+    updated_date = models.DateTimeField(auto_now=True)
+    
 class UserSubscription(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)

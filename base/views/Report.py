@@ -1,5 +1,10 @@
 from django.shortcuts import render, redirect
 from base.models import Report, McqQuestionBase
+from django.contrib.auth.decorators import user_passes_test
+
+def is_superuser(user):
+    return user.is_authenticated and user.is_superuser
+
 
 def create_report(request, question_id):
     if request.method == 'POST':
@@ -17,8 +22,11 @@ def list_reports(request):
         # Assuming there is a ForeignKey relationship from Report to McqQuestionBase
         mcq_question_base = McqQuestionBase.objects.get(id=report.question_id)
         report.q_path = mcq_question_base.path  # Add the 'q_path' attribute to the report object
+        report.type = mcq_question_base.question_type  # Add the 'q_path' attribute to the report object
+        if mcq_question_base.question_type == "PARA":
+           report.quest_id = mcq_question_base.quest_id
 
-    return render(request, 'Report/list_reports.html', {'reports': reports})
+    return render(request, 'Report/list_reports.html', {'reports': reports, 'is_superuser':is_superuser(request.user)})
 
 
 def update_report(request, report_id):

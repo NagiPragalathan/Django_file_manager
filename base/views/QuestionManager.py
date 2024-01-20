@@ -18,7 +18,7 @@ def add_question(request, path):
         .values('path', 'id', 'user_id', 'question', 'image', 'category', 'question_type', 'options', 'correct_answer', 'instructions', 'copy_qust_path', 'last_updated_date')
         .annotate(count=Count('id'))
         .annotate(path_value=F('path'))
-        .filter(path_value__isnull=False, user_id=request.user)
+        .filter(path_value__isnull=False)
     )
 
     # Group the results by path_value
@@ -59,7 +59,7 @@ def delete_question(request):
         return JsonResponse({'message': 'Question was not deleted!'})
 
 def edit_question(request,path):
-    mcq_questions = McqQuestionBase.objects.filter(user_id=request.user, question_type="MCQ")
+    mcq_questions = McqQuestionBase.objects.filter(question_type="MCQ")
     out_mcq = []
     for i in mcq_questions:
         print(i.copy_qust_path, i.id, i.question)
@@ -83,7 +83,7 @@ def edit_question(request,path):
         .values('path', 'id', 'user_id', 'question', 'explain', 'image', 'category', 'question_type', 'options', 'correct_answer', 'instructions', 'copy_qust_path', 'last_updated_date')
         .annotate(count=Count('id'))
         .annotate(path_value=F('path'))
-        .filter(path_value__isnull=False, user_id=request.user)
+        .filter(path_value__isnull=False)
         .exclude(path=path)
     )
         # .exclude(copy_qust_path_value__contains=',')  # Exclude items with a comma
@@ -100,7 +100,7 @@ def edit_question(request,path):
         return render(request, 'question_manager/edit_questions.html', {"path": path, 'mcq_quiz': None})
 
 def para_edit_question(request,path, cat):
-    mcq_questions = McqQuestionBase.objects.filter(user_id=request.user, copy_qust_path=path, quest_id=cat)
+    mcq_questions = McqQuestionBase.objects.filter(copy_qust_path=path, quest_id=cat)
 
     # Serialize the questions to JSON format
     if mcq_questions.exists():
