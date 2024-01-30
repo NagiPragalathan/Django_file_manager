@@ -1,5 +1,8 @@
 from django.shortcuts import render, redirect
 from base.models import PathManager, FolderManager, McqQuestionBase
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect
+from django.contrib import messages
 
 def add_data(request):
     if request.method == 'POST':
@@ -38,6 +41,7 @@ def add_folder(request):
         file = request.FILES.get('file')  # Assuming file is submitted in the form
         description = request.POST.get('description','No description is provided for this course')
         cost = request.POST.get('cost','0')
+        days = request.POST.get('validity','30')
         
         print("category", category, "title",folder_name)
 
@@ -45,6 +49,7 @@ def add_folder(request):
             FolderManager.objects.create(
                 user_id=request.user,
                 FolderName=folder_name,
+                validity_days = days,
                 category=folder_name,
                 FolderImage = file,
                 description=description,
@@ -120,3 +125,33 @@ def list_folders(request, path):
     return render(request, 'file_manager/Manager.html', {'path':path,'path_alter':path.replace(".", "/"),
                                                          'path_list':out_path,'folders': folders, 'files': Files,
                                                          'category':category, 'mcq':temp,'mcq_para':temp1})
+
+
+def edit_folder(request, folder_id, path):
+    folder = FolderManager.objects.get(id=folder_id)
+
+    if request.method == 'POST':
+        folder.FolderName = request.POST.get('FolderName')
+        folder.category = request.POST.get('category')
+        folder.path = request.POST.get('path')
+        folder.cost = request.POST.get('cost')
+        folder.validity_days = request.POST.get('validity_days')
+        folder.description = request.POST.get('description')
+
+        # Handle file upload if provided
+        if 'FolderImage' in request.FILES:
+            folder.FolderImage = request.FILES['FolderImage']
+
+        folder.save()
+        return redirect('list_folders', path=path)
+
+    return render(request, 'file_manager/edit_folder.html', {'folder': folder})
+
+
+def delete_folder(request, folder_id, path):
+    folder = get_object_or_404(FolderManager, id=folder_id)
+    if request.method == 'GET':
+        folder.delete()
+        messages.success(request, 'Folder deleted successfully.')
+        return redirect('list_folders', path=path)
+    return redirect('list_folders', path=path)

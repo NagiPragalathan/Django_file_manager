@@ -85,10 +85,10 @@
     <h2>Update Config</h2>
     <form method="post" action="{% url 'update_config' config_id=config.id path=path %}">
         {% csrf_token %}
-        <label for="time_mis">Time Mis:</label>
+        <label for="time_mis">Time Sec:</label>
         <div id="inp_div">
             <input type="text" name="time_mis" value="{{ config.time_mis }}" required>
-            <p>Mins</p>
+            <p>Sec</p>
         </div>
         <button type="submit">Update</button>
     </form>

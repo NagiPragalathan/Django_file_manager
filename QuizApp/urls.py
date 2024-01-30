@@ -12,6 +12,9 @@ from base.views.UserView import *
 from base.views.QuestionManager import *
 from base.views.Report import *
 from base.views.Time_config import *
+from base.views.Payment import *
+from base.views.QuestionImport import *
+from base.views.comment import *
 
 urlpatterns = []
 
@@ -35,6 +38,8 @@ file_manager = [
     path('list_data', list_data, name='list_data'),
     path('add_folder', add_folder, name='add_folder'),
     path('list_folders/<str:path>', list_folders, name='list_folders'),
+    path('edit_folder/<str:folder_id>/<str:path>', edit_folder, name='edit_folder'),
+    path('delete_folder/<str:folder_id>/<str:path>', delete_folder, name='delete_folder'),
 ]
 
 question_manager = [
@@ -51,13 +56,16 @@ question_manager = [
     path('import_questions', import_questions, name='import_questions'),
     path('get_questions/<str:category>/', get_questions_by_category, name='get_questions_by_category'),
     path('delete_qust', delete_question, name='delete_question'),
+    path('process_csv/<str:path>', process_csv, name='process_csv'),
+
     # Add other URL patterns if needed
 ]
 
 UserView = [
     path('list_course/<str:path>', ListCourse, name='list_course'),
+    path('view_course/<str:path>/<str:type>', free_courses, name='view_course'),
     path('take_quiz/<str:path>', take_quiz, name='take_quiz'),
-    
+    path('show_instructions/<str:path>', show_instructions, name='show_instructions'),
 ]
 
 report = [
@@ -74,6 +82,16 @@ time_config = [
     path('delete_config/<int:config_id>/<str:path>', delete_config, name='delete_config'),
 ]
 
+payments = [
+     path('success/<str:path>' , success , name='success'),
+     path('cost_course/<int:folder_id>' , cost_course , name='cost_course')
+]
+
+comment = [
+     path('create_comment/<str:path>' , create_comment , name='create_comment'),
+     path('update_rating/<str:path>' , update_rating , name='update_rating'),
+    #  path('cost_course/<int:folder_id>' , cost_course , name='cost_course')
+]
 
 urlpatterns.extend(admin_)
 urlpatterns.extend(auth)
@@ -83,6 +101,8 @@ urlpatterns.extend(question_manager)
 urlpatterns.extend(UserView)
 urlpatterns.extend(report)
 urlpatterns.extend(time_config)
+urlpatterns.extend(payments)
+urlpatterns.extend(comment)
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

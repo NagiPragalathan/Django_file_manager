@@ -1,5 +1,6 @@
 <!-- config_list.html -->
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -86,7 +87,15 @@
 </head>
 <body>
 
-    <h2>Config List</h2>
+    <div style="text-align: center; margin-top: 20px; width: 100%; display: flex; justify-content: space-evenly; align-items: center; flex-direction: row;">
+        <h2 style="color: #333;">Config List</h2>
+        <a href="{% url 'list_folders' path=path %}" style="text-decoration: none;">
+            <button style="background-color: #4CAF50; color: white; padding: 10px 15px; border: none; border-radius: 4px; cursor: pointer;">
+                Back
+            </button>
+        </a>
+    </div>
+    
     <ul>
         {% for config in configs %}
             <li>

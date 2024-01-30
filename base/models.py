@@ -36,10 +36,34 @@ class FolderManager(models.Model):
     category = models.CharField(max_length=50)
     path = models.CharField(max_length=400)
     cost = models.IntegerField(default=0)
+    validity_days = models.IntegerField(default=30)
     FolderImage = models.FileField(upload_to='Folder_profile_img/')
     description = models.TextField(default="No description is provided for this course", null=True, blank=True)
     updated_date = models.DateTimeField(auto_now=True)
+    last_updated_date = models.DateTimeField(auto_now=True)
+    
+class Comments(models.Model):
+    id = models.AutoField(primary_key=True)
+    category = models.CharField(max_length=50)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    comment = models.CharField(max_length=400)
+    last_updated_date = models.DateTimeField(auto_now=True)
+    
+class Rating(models.Model):
+    category = models.CharField(max_length=50)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)])
+    last_updated_date = models.DateTimeField(auto_now=True)
 
+    @classmethod
+    def calculate_average_rating(cls, category):
+        ratings = cls.objects.filter(category=category)
+        if ratings:
+            average_rating = sum(rating.rating for rating in ratings) / len(ratings)
+            return round(average_rating, 1)  # Round to one decimal place
+        else:
+            return None
+        
 class McqQuestionBase(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -81,7 +105,9 @@ class Config(models.Model):
 class UserSubscription(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_premium  = models.CharField(max_length=255)
+    course_premium  = models.CharField(max_length=255)
+    validity_days = models.IntegerField(default=30)
+    
     
 class Report(models.Model):
     id = models.AutoField(primary_key=True)

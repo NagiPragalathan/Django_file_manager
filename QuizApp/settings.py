@@ -150,3 +150,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_HOST_PASSWORD = ''  # TODO: Give APP Password here
 EMAIL_USE_TLS = True
+
+# RAZORPAY
+RAZORPAY_KEY_ID = 'rzp_live_DfyNoSOlntR36b'
+RAZORPAY_KEY_SECRET = 'YweTkjzz9QuIRGHU9TP6ilF7'

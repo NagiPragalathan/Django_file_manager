@@ -342,6 +342,7 @@
                     <div class="dropdown-menu" style="" aria-labelledby="navbarDropdown">
                         <button type="button" style="border-radius: 7px; background: #f7f8f8; border: 2px solid #d6d6d6; font-size: 11px; width: 100%;" onclick="copySelectedQuestions()">Copy Selected Questions</button>
                         {% comment %} <button type="button" style="border-radius: 7px; background: #f7f8f8; border: 2px solid #d6d6d6; font-size: 11px; width: 100%;" onclick="pasteCopiedQuestions()">Paste Copied Questions</button> {% endcomment %}
+                        <button type="button" style="border-radius: 7px; background: #f7f8f8; border: 2px solid #d6d6d6; font-size: 11px; width: 100%;" onclick="getQuizData()">Paste Copied Questions</button>
                         <div class="dropdown-divider"></div>
                         <button type="button" style="border-radius: 7px; background: #f7f8f8; border: 2px solid #d6d6d6; font-size: 11px; width: 100%;" data-toggle="modal" data-target="#importQuestionsModal">Import Questions</button>
                     </div>
@@ -350,7 +351,7 @@
                     <a class="nav-link disabled" href="{% url 'list_folders' path='root' %}">Root</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link disabled" href="{% url 'create_config' path='root' %}">Set Timmer</a>
+                    <a class="nav-link disabled" href="{% url 'create_config' path=path %}">Set Timmer</a>
                 </li>
             </ul>
             <form class="form-inline my-2 my-lg-0">
