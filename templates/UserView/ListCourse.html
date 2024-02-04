@@ -19,15 +19,21 @@
 <body>
 	<div class="container text-center my-2 d-sm-block d-lg-none">
 		<div class="btn-group" role="group" aria-label="Basic outlined example">
-			<a href="./index.html" class="btn btn-outline-primary">Home</a>
-			<a href="./all-quiz.html" class="btn btn-outline-primary">Quiz</a>
-			<a href="./leaderboard.html" class="btn btn-outline-primary">Leaderboard</a>
-			<a href="./login.html" class="btn btn-outline-primary">Login</a>
+			<a href="{% url 'home' %}" class="btn btn-outline-primary">Home</a>
+			{% if mcq %}
+				<a href="/show_instructions/{{ path }}" class="btn btn-outline-primary">Quiz</a>
+			{% endif %}
+			<a href="/leaderboard_view/{{ path }}" class="btn btn-outline-primary">Leaderboard</a>
+			{% if auth %}
+				<a href="{% url 'logout' %}" class="btn btn-outline-primary">Logout</a>
+			{% else %}
+				<a href="{% url 'login' %}" class="btn btn-outline-primary">Login</a>
+			{% endif %}
 		</div>
 	</div>
 	<nav class="navbar navbar-expand-lg bg-body-tertiary d-none d-lg-block">
 		<div class="container">
-			<a class="navbar-brand" href="./index.html">Myguruplus</a>
+			<a class="navbar-brand" href="{% url 'home' %}">Myguruplus</a>
 			<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
 				data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
 				aria-label="Toggle navigation">
@@ -35,19 +41,11 @@
 			</button>
 			<div class="collapse navbar-collapse" id="navbarSupportedContent">
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
-					<li class="nav-item">
-						<a class="nav-link active" aria-current="page" href="./index.html">Home</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="./all-quiz.html">Quiz</a>
-					</li>
-					<li class="nav-item">
-						<a class="nav-link" href="./leaderboard.html">Leaderboard</a>
-					</li>
+		
 				</ul>
-				<form class="d-flex" role="search">
-					<button class="btn btn-outline-success" type="submit">Upgrade Premium </button>
-				</form>
+				<div class="d-flex" role="search" style="gap: 10px;">
+					<a href="{% url 'logout' %}"><button class="btn btn-outline-danger" type="submit">Logout</button></a>
+				</div>
 			</div>
 		</div>
 	</nav>

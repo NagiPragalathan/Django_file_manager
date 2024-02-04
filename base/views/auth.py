@@ -92,8 +92,11 @@ def user_login(request):
 
         if user is not None:
             login(request, user)
-            return redirect('home')  # Redirect to your home page
+            if request.user.is_superuser:
+                return redirect('list_folders', path='root')
+            else:
+                return redirect('home')  # Redirect to your home page
         else:
-            return HttpResponse("Invalid login credentials")
+            return redirect('login')
     
     return render(request, 'auth/login.html')

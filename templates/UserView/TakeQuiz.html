@@ -8,6 +8,9 @@
     <title>Quiz Title | Quiz - MyGURUPLUS</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <!-- Include your custom JavaScript file -->
+        <script src="path/to/your/custom/javascript/file.js"></script>
 
     <style>
         body {
@@ -15,6 +18,10 @@
             margin: 0;
             padding: 0;
             background-color: #f4f4f4;
+        }
+
+        .option:hover{
+            background:#d8d8ff;
         }
 
         .navbar {
@@ -253,6 +260,8 @@
         crossorigin="anonymous"></script>
 
         <script>
+            document.documentElement.requestFullscreen()
+
             const totalQuestions = {{ questions|length }};
             let currentQuestion = 1;
         
@@ -359,9 +368,13 @@
             
                     const optionElement = document.createElement('div');
                     optionElement.className = 'option';
+                    optionElement.style.display = 'flex';
+                    optionElement.style.flexDirection = 'row-reverse';
+                    optionElement.style.justifyContent = 'flex-end';
+                    optionElement.style.gap = '15px';
                     optionElement.innerHTML = `<label>${option}</label>`;
                     optionElement.appendChild(radioInput);
-            
+
                     optionElement.addEventListener('click', () => {
                         radioInput.checked = true;
                         markSelectedOption(optionElement);
@@ -475,6 +488,7 @@
                                 <canvas id="myChart" width="400" height="400"></canvas>
                             </div>
                         </div>
+                        You can check the Rank here : <a href='/leaderboard_view/{{ path }}'><button>leaderboard</button></a>
                     </div>
                     <div class="list-group">
                         ${listQuestions}
@@ -508,6 +522,24 @@
                     data: data,
                     options1: options1
                 });
+                
+                $.ajax({
+                    type: 'POST',
+                    url: '/update_leaderboard',
+                    data: JSON.stringify({
+                        'path': "{{ path }}",
+                        'mark': CorrectAnswers,
+                    }),
+                    contentType: 'application/json; charset=utf-8',
+                    dataType: 'json',
+                    success: function (data) {
+                        console.log(data);
+                    },
+                    error: function (error) {
+                        console.log(error);
+                    }
+                });
+                
             }
 
             
@@ -601,6 +633,12 @@
             
                 const formattedTime = `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
                 document.getElementById('timer').innerText = formattedTime;
+
+                if (s === 0) {
+                    endQuiz()
+                    clearInterval(interval); // Stop the timer
+                    
+                }
             }
 
             function start() {

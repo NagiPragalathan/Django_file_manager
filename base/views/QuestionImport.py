@@ -18,7 +18,7 @@ def process_csv_file(csv_file):
 
 def process_csv(request, path):
     if request.method == 'POST' and request.FILES['csv_file']:
-        splited_char = ","
+        splited_char = "\n" #you can also use "," here
         csv_file = request.FILES['csv_file']
         Instructions = request.POST.get('inst')
 

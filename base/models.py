@@ -4,6 +4,8 @@ from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
 from ckeditor_uploader.fields import RichTextUploadingField
+from datetime import datetime, timedelta
+
 
 class ImageEditor(models.Model):
     question = RichTextUploadingField()
@@ -32,7 +34,7 @@ class PathManager(models.Model):
 class FolderManager(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    FolderName = models.CharField(max_length=255)
+    FolderName = models.CharField(max_length=255, unique=True)
     category = models.CharField(max_length=50)
     path = models.CharField(max_length=400)
     cost = models.IntegerField(default=0)
@@ -47,6 +49,14 @@ class Comments(models.Model):
     category = models.CharField(max_length=50)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     comment = models.CharField(max_length=400)
+    last_updated_date = models.DateTimeField(auto_now=True)
+
+class LeaderBoard(models.Model):
+    id = models.AutoField(primary_key=True)
+    path = models.CharField(max_length=50)
+    user_id = models.ForeignKey(User, on_delete=models.CASCADE)
+    mark = models.IntegerField(default=0)
+    attempt = models.IntegerField(default=1)
     last_updated_date = models.DateTimeField(auto_now=True)
     
 class Rating(models.Model):
@@ -105,13 +115,38 @@ class Config(models.Model):
 class UserSubscription(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
-    course_premium  = models.CharField(max_length=255)
-    validity_days = models.IntegerField(default=30)
+    course_premium = models.CharField(max_length=255)
+    updated_date = models.DateTimeField(auto_now_add=True)  # Change auto_now_add=True
     
-    
+    def is_premium_expired(self, duration_days):
+        if self.updated_date is None:
+            print("Inner test : ",self.course_premium, self.updated_date)
+            return True  # Or handle the case when updated_date is None
+        
+        expiration_date = self.updated_date + timedelta(days=duration_days)
+        current_datetime = timezone.now()
+        print(current_datetime, expiration_date, current_datetime > expiration_date)
+        
+        if current_datetime > expiration_date:
+            return True 
+        else:
+            return False
+        
+
 class Report(models.Model):
     id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(User, on_delete=models.CASCADE)
     message  = models.TextField(max_length=255)
     question_id = models.IntegerField()
     flag =  models.CharField(max_length=50)
+    
+
+
+class PaymentDb(models.Model):
+    razorpay_order_id = models.CharField(max_length=255)
+    razorpay_payment_id = models.CharField(max_length=255)
+    razorpay_signature = models.CharField(max_length=255)
+    updated_date = models.DateTimeField(auto_now_add=True)  # Change auto_now_add=True
+
+    def __str__(self):
+        return f"Payment ID: {self.id}"

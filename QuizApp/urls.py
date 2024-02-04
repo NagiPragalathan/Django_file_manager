@@ -15,6 +15,7 @@ from base.views.Time_config import *
 from base.views.Payment import *
 from base.views.QuestionImport import *
 from base.views.comment import *
+from base.views.leaderboard import *
 
 urlpatterns = []
 
@@ -31,6 +32,7 @@ auth = [
 common = [
     path('home', home, name='home'),
     path('', home, name='home'),
+    path('logout/', logout_view, name='logout'),
 ]
 
 file_manager = [
@@ -93,6 +95,11 @@ comment = [
     #  path('cost_course/<int:folder_id>' , cost_course , name='cost_course')
 ]
 
+LeaderBoard_url = [
+     path('update_leaderboard' , update_leaderboard , name='update_leaderboard'),
+     path('leaderboard_view/<str:path>' , leaderboard_view , name='leaderboard_view'),
+]
+
 urlpatterns.extend(admin_)
 urlpatterns.extend(auth)
 urlpatterns.extend(common)
@@ -103,6 +110,7 @@ urlpatterns.extend(report)
 urlpatterns.extend(time_config)
 urlpatterns.extend(payments)
 urlpatterns.extend(comment)
+urlpatterns.extend(LeaderBoard_url)
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -122,9 +122,12 @@ def list_folders(request, path):
         
     print(category)
     
-    return render(request, 'file_manager/Manager.html', {'path':path,'path_alter':path.replace(".", "/"),
+    if request.user.is_superuser:
+        return render(request, 'file_manager/Manager.html', {'path':path,'path_alter':path.replace(".", "/"),
                                                          'path_list':out_path,'folders': folders, 'files': Files,
                                                          'category':category, 'mcq':temp,'mcq_para':temp1})
+    else:
+        return render(request, 'UserView/admin_error.html')
 
 
 def edit_folder(request, folder_id, path):

@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404
 import razorpay
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
-from base.models import FolderManager, UserSubscription
+from base.models import FolderManager, UserSubscription, PaymentDb
 from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 import json
@@ -29,6 +29,15 @@ def success(request, path):
         razorpay_payment_id = request.POST.get('razorpay_payment_id')
         razorpay_signature = request.POST.get('razorpay_signature')
         
+        try:
+            payment, created = PaymentDb.objects.get_or_create(
+                razorpay_order_id=razorpay_order_id,
+                razorpay_payment_id=razorpay_payment_id,
+                razorpay_signature=razorpay_signature
+            )
+        except:
+            print("Error at payment Db..")
+        
         print(razorpay_order_id, razorpay_payment_id, razorpay_signature)
         
         try:
@@ -39,7 +48,7 @@ def success(request, path):
             verify = verify_and_process_payment(request, path, razorpay_order_id, razorpay_payment_id, razorpay_signature)
 
             if verify:
-                return HttpResponseBadRequest("Payment verification Success..!")
+                return render(request, 'Payment/payment_sucess.html',  {'path': path})
             else:
                 return HttpResponseBadRequest("Payment verification failed in inner..!")
                 

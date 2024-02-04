@@ -9,6 +9,8 @@ def ListCourse(request, path):
     temp1=[]
     Files = PathManager.objects.filter(path=path)
     folders = FolderManager.objects.filter(path=path).order_by('FolderName')
+    
+    print(folders)
     mcq_questions = McqQuestionBase.objects.filter(path=path, question_type="MCQ")
     para_mcq_questions = McqQuestionBase.objects.filter(path=path, question_type="PARA")
     unique_para_categories_list = list(para_mcq_questions.values_list('quest_id', flat=True).distinct())
@@ -16,7 +18,7 @@ def ListCourse(request, path):
     Files = sorted(Files, key=lambda x: x.file.name)
     print(unique_para_categories_list)
     
-    rating = {}
+    rating = {}  
     
         
     for i in folders:
@@ -66,7 +68,16 @@ def ListCourse(request, path):
     
     Subscription_path = []
     user_subs = UserSubscription.objects.filter(user_id=request.user)
+    for i in FolderManager.objects.all():
+        print("i.path", i.path)
     for i in user_subs:
+        try:
+            obj1 = PathManager.objects.get(path=i.course_premium)
+            print(obj1)
+            obj = FolderManager.objects.get(path=i.course_premium)
+            print("course_premium",i.course_premium, obj.validity_days)
+        except:
+            print("Error at course_premium", i.course_premium)
         Subscription_path.append(i.course_premium.split('.')[1])
     mod_folder = []
     premium = []
@@ -76,7 +87,11 @@ def ListCourse(request, path):
         if i.category not in Subscription_path:
             mod_folder.append(i)
         else:
-            premium.append(i)
+            obj = UserSubscription.objects.get(course_premium="root."+str(i.category))
+            print(obj.is_premium_expired(1))
+            print("premium : ",i.path, i.category, i.validity_days)
+            if not obj.is_premium_expired(1): # Here the code check the validity of subscription
+                premium.append(i)
     print(premium, mod_folder)
     
     # comments !
@@ -92,18 +107,22 @@ def ListCourse(request, path):
         user_exists = False
         print(e)
 
-    
-    
+    if path != 'root':
+        obj2 = FolderManager.objects.get(category=path.split('.')[1],  path='root')
+        print(path, premium, path.split('.')[1], obj2.cost)
         
-    if path == 'root':
-        return render(request, 'UserView/ListCourse.html', {'path':path,'path_alter':path.replace(".", "/"),'star':[1,2,3,4,5],
-                                                         'path_list':out_path,'folders': mod_folder, 'files': Files,'user_exists':not user_exists,
-                                                         'category':category, 'mcq':temp,'mcq_para':temp1, "premium" :premium, 'comments':comments})
-    else:
-        return render(request, 'UserView/ListCourse_Folder.html', {'path':path,'path_alter':path.replace(".", "/"),'star':[1,2,3,4,5],
-                                                         'path_list':out_path,'folders': mod_folder, 'files': Files,'user_exists':not user_exists,
-                                                         'category':category, 'mcq':temp,'mcq_para':temp1, "premium" :premium, 'comments':comments})
-        
+    if True:
+        if path == 'root':
+            return render(request, 'UserView/ListCourse.html', {'path':path,'path_alter':path.replace(".", "/"),'star':[1,2,3,4,5],'auth':request.user.is_authenticated,
+                                                            'path_list':out_path,'folders': mod_folder, 'files': Files,'user_exists':not user_exists,
+                                                            'category':category, 'mcq':temp,'mcq_para':temp1, "premium" :premium, 'comments':comments})
+        elif obj2.cost == 0:
+            return render(request, 'UserView/ListCourse_Folder.html', {'path':path,'path_alter':path.replace(".", "/"),'star':[1,2,3,4,5],'auth':request.user.is_authenticated,
+                                                            'path_list':out_path,'folders': mod_folder, 'files': Files,'user_exists':not user_exists,
+                                                            'category':category, 'mcq':temp,'mcq_para':temp1, "premium" :premium, 'comments':comments})
+        else:
+            return render(request, 'UserView/course_error.html',  {'path': obj2.id})
+            
 def free_courses(request, path, type):
     folders = FolderManager.objects.filter(path=path).order_by('FolderName')
     rating = {}
@@ -139,7 +158,7 @@ def show_instructions(request, path):
     user_subscription= UserSubscription.objects.all()
     
     for i in user_subscription:
-        print(i.course_premium,i.validity_days)
+        print(i.course_premium)
     print("............................")
     for i in obj:
         print(i.category,i.path)
@@ -198,5 +217,5 @@ def take_quiz(request, path):
         quest_id = group['quest_id']
         total_questions = group['total_questions']
         print(f"Quest ID: {quest_id}, Total Questions: {total_questions}", correctAnswer)
-    return render(request, "UserView/TakeQuiz.html",{'questions':questions,'options':options, 'answers':correctAnswer, 'question_ids':question_ids, 'timmer':timmer})
+    return render(request, "UserView/TakeQuiz.html",{'questions':questions,'options':options, 'answers':correctAnswer, 'question_ids':question_ids, 'timmer':timmer, 'path':path})
 

@@ -27,11 +27,18 @@ def add_question(request, path):
     # Group the results by path_value
     # grouped_data = {key: list(group) for key, group in groupby(result, key=lambda x: x['path_values'])}
     # Pass the grouped_data to the template
-    return render(request, 'question_manager/add_questions.html', {"grouped_data": grouped_data, "path": path})
+    if request.user.is_superuser:
+        return render(request, 'question_manager/add_questions.html', {"grouped_data": grouped_data, "path": path})
+    else:
+        return render(request, 'UserView/admin_error.html')
+
 
 
 def add_para_question(request,path):
-    return render(request, 'question_manager/para_create.html',{"path":path})
+    if request.user.is_superuser:
+        return render(request, 'question_manager/para_create.html',{"path":path})
+    else:
+        return render(request, 'UserView/admin_error.html')
 
 
 @csrf_exempt  # Use this decorator for simplicity; consider using CSRF protection in production
@@ -93,13 +100,17 @@ def edit_question(request,path):
     # Group the results by path_value
     grouped_data = {key: list(group) for key, group in groupby(result, key=lambda x: x['path_value'])}
     # Serialize the questions to JSON format
-    if mcq_questions.exists():
-        out = {"instructions":instructions_out,"questions":[{'id':question.id,'question': question.question,'explain':question.explain,'options': question.options,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in out_mcq]}
-        print(out)
-        return render(request, 'question_manager/edit_questions.html', {"path": path, 'mcq_quiz': out,"grouped_data": grouped_data})
+    if request.user.is_superuser:
+        if mcq_questions.exists():
+            out = {"instructions":instructions_out,"questions":[{'id':question.id,'question': question.question,'explain':question.explain,'options': question.options,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in out_mcq]}
+            print(out)
+            return render(request, 'question_manager/edit_questions.html', {"path": path, 'mcq_quiz': out,"grouped_data": grouped_data})
+        else:
+            # Handle the case when no questions are found
+            return render(request, 'question_manager/edit_questions.html', {"path": path, 'mcq_quiz': None})
     else:
-        # Handle the case when no questions are found
-        return render(request, 'question_manager/edit_questions.html', {"path": path, 'mcq_quiz': None})
+        return render(request, 'UserView/admin_error.html')
+
 
 def para_edit_question(request,path, cat):
     mcq_questions = McqQuestionBase.objects.filter(copy_qust_path=path, quest_id=cat)
@@ -107,12 +118,15 @@ def para_edit_question(request,path, cat):
     for i in mcq_questions:
         instructions_out = i.instructions
     # Serialize the questions to JSON format
-    if mcq_questions.exists():
-        out = {"instructions":instructions_out,"questions":[{'id':question.id,'question': question.question,'options': question.options,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in mcq_questions]}
-        return render(request, 'question_manager/para_quest.html', {"path": path, 'mcq_quiz': out,"cat":cat})
+    if request.user.is_superuser:
+        if mcq_questions.exists():
+            out = {"instructions":instructions_out,"questions":[{'id':question.id,'question': question.question,'options': question.options,"correctAnswer":question.correct_answer,"last_updated_date":question.last_updated_date.strftime('%Y-%m-%d %H:%M:%S')} for question in mcq_questions]}
+            return render(request, 'question_manager/para_quest.html', {"path": path, 'mcq_quiz': out,"cat":cat})
+        else:
+            # Handle the case when no questions are found
+            return render(request, 'question_manager/para_quest.html', {"path": path, 'mcq_quiz': None})
     else:
-        # Handle the case when no questions are found
-        return render(request, 'question_manager/para_quest.html', {"path": path, 'mcq_quiz': None})
+        return render(request, 'UserView/admin_error.html')
 
 @csrf_exempt
 def update_db(request):

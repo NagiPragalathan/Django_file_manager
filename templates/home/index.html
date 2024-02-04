@@ -1,414 +1,516 @@
-{% extends 'layouts/base.html' %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block title %} Dashboard {% endblock title %}
+  <head>
+    {% load static %}
 
-<!-- Specific CSS goes HERE -->
-{% block stylesheets %}{% endblock stylesheets %}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-{% block content %}
+    <title>Myguruplus</title>
 
-    <!-- Header -->
-    <div class="header bg-primary pb-6">
-      <div class="container-fluid">
-        <div class="header-body">
-          <div class="row align-items-center py-4">
-            <div class="col-lg-6 col-7">
-              <h6 class="h2 text-white d-inline-block mb-0">Default</h6>
-              <nav aria-label="breadcrumb" class="d-none d-md-inline-block ml-md-4">
-                <ol class="breadcrumb breadcrumb-links breadcrumb-dark">
-                  <li class="breadcrumb-item"><a href="#"><i class="fas fa-home"></i></a></li>
-                  <li class="breadcrumb-item"><a href="#">Dashboards</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Default</li>
-                </ol>
-              </nav>
-            </div>
-            <div class="col-lg-6 col-5 text-right">
-              <a href="#" class="btn btn-sm btn-neutral">New</a>
-              <a href="#" class="btn btn-sm btn-neutral">Filters</a>
-            </div>
-          </div>
-          <!-- Card stats -->
+    <style>
+      .star-container {
+          display: inline-block;
+          font-size: 24px;
+      }
+
+      .star-container .star {
+          color: #ccc;
+          cursor: pointer;
+      }
+
+      .star-container .star.gold {
+          color: gold;
+      }
+  </style>
+   
+    <!-- Bootstrap core CSS -->
+    <link href=" {% static 'vendor/bootstrap/css/bootstrap.min.css' %} " rel="stylesheet">
+
+
+    <!-- Additional CSS Files -->
+    <link rel="stylesheet" href=" {% static 'assets/css/fontawesome.css' %} ">
+    <link rel="stylesheet" href=" {% static 'assets/css/templatemo-digimedia-v2.css' %} ">
+    <link rel="stylesheet" href=" {% static 'assets/css/animated.css' %} ">
+    <link rel="stylesheet" href=" {% static 'assets/css/owl.css' %} ">
+
+    <!--
+
+TemplateMo 568 DigiMedia
+
+https://templatemo.com/tm-568-digimedia
+
+-->
+  </head>
+  
+
+<body>
+  
+
+  <!-- ***** Preloader Start ***** -->
+  <div id="js-preloader" class="js-preloader">
+    <div class="preloader-inner">
+      <span class="dot"></span>
+      <div class="dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+  <!-- ***** Preloader End ***** -->
+<!-- Pre-header Starts --> <!-- Pre-header End -->
+
+  <!-- ***** Header Area Start ***** -->
+  <header class="header-area header-sticky wow slideInDown" data-wow-duration="0.75s" data-wow-delay="0s">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <nav class="main-nav">
+            <!-- ***** Logo Start ***** -->
+            <a href="#Myguruplus" class="logo d-flex align-items-center py-3 ">
+              <img src="'assets/images/logo.png" alt="">
+              <h3 class="fw-bold" id="#Myguruplus" style="color: #b70ed5; text-shadow: 1px 1px black;">MYGURUPLUS</h3>
+            </a>
+            <!-- ***** Logo End ***** -->
+            <!-- ***** Menu Start ***** -->
+            <ul class="nav">
+              <li class="scroll-to-section "><a href="#top" class="active home home-hover">Home</a></li>
+              <li class="scroll-to-section"><a href="#about">About</a></li>
+             
+              <li class="scroll-to-section"><a href="#portfolio">Courses</a></li>
+           
+              <li class="scroll-to-section"><a href="#contact">Contact</a></li> 
+              {% if auth %}
+              <li class="scroll-to-section"><div class="border-first-button"><a href="{% url 'logout' %}">Logout</a></div></li> 
+              {% else %}
+              <li class="scroll-to-section"><div class="border-first-button"><a href="login">SignIn</a></div></li> 
+              {% endif %}
+            </ul>        
+            <a class='menu-trigger'>
+                <span>Menu</span>
+            </a>
+            <!-- ***** Menu End ***** -->
+          </nav>
+        </div>
+      </div>
+    </div>
+  </header>
+  <!-- ***** Header Area End ***** -->
+  <div style="padding-top: 100px; "></div>
+  <div class="bg-primary py-3 h-5 breaking ">
+    <p class="h-5 px-5 fs-5 fw-semibold text-black"> Demo content test run</p>
+  </div>
+  <div class="main-banner wow fadeIn" id="top" data-wow-duration="1s" data-wow-delay="0.5s">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
           <div class="row">
-            <div class="col-xl-3 col-md-6">
-              <div class="card card-stats">
-                <!-- Card body -->
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Total traffic</h5>
-                      <span class="h2 font-weight-bold mb-0">350,897</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-gradient-red text-white rounded-circle shadow">
-                        <i class="ni ni-active-40"></i>
+            <div class="col-lg-6 align-self-center">
+              <div class="left-content show-up header-text wow fadeInLeft" data-wow-duration="1s" data-wow-delay="1s">
+                <div class="row">
+                  <div class="col-lg-12">
+                    <h6>Myguruplus</h6>
+                    <h2>Daily FREE Drill: Conquer TNPSC</h2>
+                    <p> Conquer your TNPSC prep with MyGURUPLUS!  We arm you with a comprehensive arsenal of learning tools1 Lakh+ MCQs: Practice your way to perfection with a massive question bank covering every TNPSC subject. 2000+ Online Tests: Simulate the real exam experience with full-length mock tests and topic-specific quizze.</p>
+                  </div>
+                  {% if auth %}
+                    <div class="col-lg-12 d-flex gap-4">
+                      <div class="border-first-button scroll-to-section">
+                        <a href="/list_course/root">WorkSpace</a>
                       </div>
                     </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-sm">
-                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
+                  {% else %}
+                    <div class="col-lg-12 d-flex gap-4">
+                      <div class="border-first-button scroll-to-section">
+                        <a href="enter_otp">Get Started</a>
+                      </div>
+                      <div class="border-first-button scroll-to-section">
+                        <a href="login">Login</a>
+                      </div>
+                    </div>
+                  {% endif %}
                 </div>
               </div>
             </div>
-            <div class="col-xl-3 col-md-6">
-              <div class="card card-stats">
-                <!-- Card body -->
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">New users</h5>
-                      <span class="h2 font-weight-bold mb-0">2,356</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-gradient-orange text-white rounded-circle shadow">
-                        <i class="ni ni-chart-pie-35"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-sm">
-                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-              <div class="card card-stats">
-                <!-- Card body -->
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Sales</h5>
-                      <span class="h2 font-weight-bold mb-0">924</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-gradient-green text-white rounded-circle shadow">
-                        <i class="ni ni-money-coins"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-sm">
-                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div class="col-xl-3 col-md-6">
-              <div class="card card-stats">
-                <!-- Card body -->
-                <div class="card-body">
-                  <div class="row">
-                    <div class="col">
-                      <h5 class="card-title text-uppercase text-muted mb-0">Performance</h5>
-                      <span class="h2 font-weight-bold mb-0">49,65%</span>
-                    </div>
-                    <div class="col-auto">
-                      <div class="icon icon-shape bg-gradient-info text-white rounded-circle shadow">
-                        <i class="ni ni-chart-bar-32"></i>
-                      </div>
-                    </div>
-                  </div>
-                  <p class="mt-3 mb-0 text-sm">
-                    <span class="text-success mr-2"><i class="fa fa-arrow-up"></i> 3.48%</span>
-                    <span class="text-nowrap">Since last month</span>
-                  </p>
-                </div>
+            <div class="col-lg-6">
+              <div class="right-image wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.5s">
+                <img src="https://s3.india.com/wp-content/uploads/2016/03/1233.jpg" alt="">
               </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Page content -->
-    <div class="container-fluid mt--6">
+  <div id="about" class="about section">
+    <div class="container">
       <div class="row">
-        <div class="col-xl-8">
-          <div class="card bg-default">
-            <div class="card-header bg-transparent">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h6 class="text-light text-uppercase ls-1 mb-1">Overview</h6>
-                  <h5 class="h3 text-white mb-0">Sales value</h5>
+        <div class="col-lg-12">
+          <div class="row">
+            <div class="col-lg-6">
+              <div class="about-left-image  wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.5s">
+                <img src="https://www.careerguide.com/career/wp-content/uploads/2023/10/TNPSC-1024x569.webp" alt="">
+              </div>
+            </div>
+            <div class="col-lg-6 align-self-center  wow fadeInRight" data-wow-duration="1s" data-wow-delay="0.5s">
+              <div class="about-right-content">
+                <div class="section-heading">
+                  <h6>About Us</h6>
+                  <h4>Who is Myguruplus <em>TNPSC</em></h4>
+                  <div class="line-dec"></div>
                 </div>
-                <div class="col">
-                  <ul class="nav nav-pills justify-content-end">
-                    <li class="nav-item mr-2 mr-md-0" data-toggle="chart" data-target="#chart-sales-dark" data-update='{"data":{"datasets":[{"data":[0, 20, 10, 30, 15, 40, 20, 60, 60]}]}}' data-prefix="$" data-suffix="k">
-                      <a href="#" class="nav-link py-2 px-3 active" data-toggle="tab">
-                        <span class="d-none d-md-block">Month</span>
-                        <span class="d-md-none">M</span>
-                      </a>
+                <p>MyGURUPLUS is your one-stop portal to unlocking your potential and cracking the TNPSC exams. We have over 6 years of experience in the TNPSC coaching field, having trained more than 2,500 students. With over 100,000 MCQ questions for practice, we provide a comprehensive and effective learning platform.
+                </p>
+                <div class="row">
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="skill-item first-skill-item wow fadeIn" data-wow-duration="1s" data-wow-delay="0s">
+                      <div class="progress" data-percentage="90">
+                        <span class="progress-left">
+                          <span class="progress-bar"></span>
+                        </span>
+                        <span class="progress-right">
+                          <span class="progress-bar"></span>
+                        </span>
+                        <div class="progress-value">
+                          <div>
+                            1 Lak+<br>
+                            <span>Notes</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="skill-item second-skill-item wow fadeIn" data-wow-duration="1s" data-wow-delay="0s">
+                      <div class="progress" data-percentage="80">
+                        <span class="progress-left">
+                          <span class="progress-bar"></span>
+                        </span>
+                        <span class="progress-right">
+                          <span class="progress-bar"></span>
+                        </span>
+                        <div class="progress-value">
+                          <div>
+                            22k+ <br>
+                            <span>MCQ</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-lg-4 col-sm-4">
+                    <div class="skill-item third-skill-item wow fadeIn" data-wow-duration="1s" data-wow-delay="0s">
+                      <div class="progress" data-percentage="80">
+                        <span class="progress-left">
+                          <span class="progress-bar"></span>
+                        </span>
+                        <span class="progress-right">
+                          <span class="progress-bar"></span>
+                        </span>
+                        <div class="progress-value">
+                          <div>
+                            40k +<br>
+                            <span>Q/A NOTES</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div> 
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="services" class="services section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <div class="section-heading  wow fadeInDown" data-wow-duration="1s" data-wow-delay="0.5s">
+            <h6>Our Services</h6>
+            <h4>What Our Myguruplus <em>Provides</em></h4>
+            <div class="line-dec"></div>
+          </div>
+        </div>
+        <div class="col-lg-12">
+          <div class="naccs">
+            <div class="grid">
+              <div class="row">
+                
+                <div class="col-lg-12">
+                  <ul class="nacc">
+                    <li class="active">
+                      <div>
+                        <div class="thumb">
+                          <div class="row">
+                            <div class="col-lg-6 align-self-center">
+                              <div class="left-text">
+                                <h4>Power Prep:TNPSC Mastery Drill
+
+                                  &amp; Adaptive Learning Paths</h4>
+                                <p>Conquer your TNPSC prep with MyGURUPLUS!  We arm you with a comprehensive arsenal of learning tools 2000+ Online Tests: Simulate the real exam experience with full-length mock tests and topic-specific quizzes.
+                                  TNSCERT Tests:We've meticulously crafted tests based on the official TNPSCERT syllabus, ensuring your prep aligns perfectly with the source.
+                                  </p>
+                                <div class="ticks-list"><span><i class="fa fa-check"></i> User-Friendly Interface</span> <span><i class="fa fa-check"></i> Comprehensive Domain Coverage</span> 
+                                   <span><i class="fa fa-check"></i>  Peer Comparison and Leaderboard</span> <span><i class="fa fa-check"></i> User-Friendly Interface</span></div>
+                                <p>1 Lakh+ MCQs: Practice your way to perfection with a massive question bank covering every TNPSC subject.
+                                </p>
+                              </div>
+                            </div>
+                            <div class="col-lg-6 align-self-center">
+                              <div class="right-image">
+                                <img src="https://ideogram.ai/api/images/direct/FH3tOhcpQG2Bl119LQYPFQ.jpg" alt="">
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </li>
-                    <li class="nav-item" data-toggle="chart" data-target="#chart-sales-dark" data-update='{"data":{"datasets":[{"data":[0, 20, 5, 25, 10, 30, 15, 40, 40]}]}}' data-prefix="$" data-suffix="k">
-                      <a href="#" class="nav-link py-2 px-3" data-toggle="tab">
-                        <span class="d-none d-md-block">Week</span>
-                        <span class="d-md-none">W</span>
-                      </a>
+                    <li>
+                      
+                          
+                    </li>
+                    <li>
+                     
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      
+                           
+                          </div>
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+
+                            </div>
+                          </div>
+                        </div>
+                      </div>
                     </li>
                   </ul>
-                </div>
-              </div>
-            </div>
-            <div class="card-body">
-              <!-- Chart -->
-              <div class="chart">
-                <!-- Chart wrapper -->
-                <canvas id="chart-sales-dark" class="chart-canvas"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-4">
-          <div class="card">
-            <div class="card-header bg-transparent">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h6 class="text-uppercase text-muted ls-1 mb-1">Performance</h6>
-                  <h5 class="h3 mb-0">Total orders</h5>
-                </div>
-              </div>
-            </div>
-            <div class="card-body">
-              <!-- Chart -->
-              <div class="chart">
-                <canvas id="chart-bars" class="chart-canvas"></canvas>
+                </div>          
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div class="row">
-        <div class="col-xl-8">
-          <div class="card">
-            <div class="card-header border-0">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h3 class="mb-0">Page visits</h3>
-                </div>
-                <div class="col text-right">
-                  <a href="#!" class="btn btn-sm btn-primary">See all</a>
-                </div>
-              </div>
-            </div>
-            <div class="table-responsive">
-              <!-- Projects table -->
-              <table class="table align-items-center table-flush">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col">Page name</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col">Unique users</th>
-                    <th scope="col">Bounce rate</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">
-                      /argon/
-                    </th>
-                    <td>
-                      4,569
-                    </td>
-                    <td>
-                      340
-                    </td>
-                    <td>
-                      <i class="fas fa-arrow-up text-success mr-3"></i> 46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      /argon/index.html
-                    </th>
-                    <td>
-                      3,985
-                    </td>
-                    <td>
-                      319
-                    </td>
-                    <td>
-                      <i class="fas fa-arrow-down text-warning mr-3"></i> 46,53%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      /argon/charts.html
-                    </th>
-                    <td>
-                      3,513
-                    </td>
-                    <td>
-                      294
-                    </td>
-                    <td>
-                      <i class="fas fa-arrow-down text-warning mr-3"></i> 36,49%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      /argon/tables.html
-                    </th>
-                    <td>
-                      2,050
-                    </td>
-                    <td>
-                      147
-                    </td>
-                    <td>
-                      <i class="fas fa-arrow-up text-success mr-3"></i> 50,87%
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      /argon/profile.html
-                    </th>
-                    <td>
-                      1,795
-                    </td>
-                    <td>
-                      190
-                    </td>
-                    <td>
-                      <i class="fas fa-arrow-down text-danger mr-3"></i> 46,53%
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-        <div class="col-xl-4">
-          <div class="card">
-            <div class="card-header border-0">
-              <div class="row align-items-center">
-                <div class="col">
-                  <h3 class="mb-0">Social traffic</h3>
-                </div>
-                <div class="col text-right">
-                  <a href="#!" class="btn btn-sm btn-primary">See all</a>
-                </div>
-              </div>
-            </div>
-            <div class="table-responsive">
-              <!-- Projects table -->
-              <table class="table align-items-center table-flush">
-                <thead class="thead-light">
-                  <tr>
-                    <th scope="col">Referral</th>
-                    <th scope="col">Visitors</th>
-                    <th scope="col"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <th scope="row">
-                      Facebook
-                    </th>
-                    <td>
-                      1,480
-                    </td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <span class="mr-2">60%</span>
-                        <div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-danger" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      Facebook
-                    </th>
-                    <td>
-                      5,480
-                    </td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <span class="mr-2">70%</span>
-                        <div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-success" role="progressbar" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100" style="width: 70%;"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      Google
-                    </th>
-                    <td>
-                      4,807
-                    </td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <span class="mr-2">80%</span>
-                        <div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-primary" role="progressbar" aria-valuenow="80" aria-valuemin="0" aria-valuemax="100" style="width: 80%;"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      Instagram
-                    </th>
-                    <td>
-                      3,678
-                    </td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <span class="mr-2">75%</span>
-                        <div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-info" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 75%;"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                  <tr>
-                    <th scope="row">
-                      twitter
-                    </th>
-                    <td>
-                      2,645
-                    </td>
-                    <td>
-                      <div class="d-flex align-items-center">
-                        <span class="mr-2">30%</span>
-                        <div>
-                          <div class="progress">
-                            <div class="progress-bar bg-gradient-warning" role="progressbar" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100" style="width: 30%;"></div>
-                          </div>
-                        </div>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {% include "includes/footer.html" %}
-
     </div>
+  </div>
 
-{% endblock content %}
+  
+  
+     
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<!-- Specific JS goes HERE --> 
-{% block javascripts %}
 
-  <script src="/static/assets/vendor/chart.js/dist/Chart.min.js"></script>
-  <script src="/static/assets/vendor/chart.js/dist/Chart.extension.js"></script>
+  <div id="portfolio" class="our-portfolio section">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="section-heading wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.3s">
+                    <h6>Our Courses</h6>
+                    <h4>See Our Recent <em>Courses</em></h4>
+                    <div class="line-dec"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid wow fadeIn" data-wow-duration="1s" data-wow-delay="0.7s">
+      <div class="row">
+          {% for i in courses %}
+          <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+              <div class="portfolio-item h-100"style="display: flex;flex-direction: column;justify-content: space-between;">
+                  <div class="thumb">
+                      <img src="{{ i.FolderImage.url }}" class="img-fluid" alt="">
+                  </div>
+                  <div class="down-content">
+                      <h4>{{ i.FolderName }}</h4>
+                      <div class="rating-container" id="webDevelopmentRating">
+                          <div class="star-container">
+                              {% for j in rate %}
+                                {% if i.rating < j %}
+                                <span class="star">✩</span>
+                                {% elif  i.rating > j %}
+                                <span class="star">★</span>
+                                {% else %}
+                                <span class="star">✩</span>
+                              {% endif %}
+                              {% endfor %}
+                          </div>
+                      </div>
+                      <p id="rating-value"></p>
+                  </div>
+              </div>
+          </div>
+          {% endfor %}
+      </div>
+  </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-5">
+                <div class="section-heading wow fadeInLeft" data-wow-duration="1s" data-wow-delay="0.3s">
+                    <h4 class="pt-5 ">See Our <em>Leaderboard</em></h4>
+                    <div class="line-dec"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid  fadeIn" data-wow-duration="1s" data-wow-delay="0.7s">
+        <div class="row">
+            <div class="col-12 d-flex justify-content-evenly card-container ">
+              <div class="card d-flex col-md-8 col-lg-3 p-3  rounded-5  ">
+                <div class="thumb ">
+                  <img src="https://ideogram.ai/api/images/direct/eBhauiO8Q7Khip8Nadkcyw.jpg" class="rounded " alt="">
+                </div>
+                <h3 class="py-3  d-flex justify-content-center align-items-center fw-bold">Rahul</h3>
+              </div>
+              <div class="card d-flex  col-md-8 col-lg-3 p-3  rounded-5  ">
+                <div class="thumb">
+                  <img src="https://ideogram.ai/api/images/direct/w3iyKPBkSAqmypzCiJgQLw.jpg" class="rounded" alt="">
+                </div>
+                <h3 class="py-3  d-flex justify-content-center align-items-center fw-bold">Rahul</h3>
+              </div>
+              <div class="card d-flex  col-md-8 col-lg-3 p-3  rounded-5  ">
+                <div class="thumb">
+                  <img src="https://ideogram.ai/api/images/direct/2bVVxLrCSiyyfWWr0p5pgA.jpg" class="rounded " alt="">
+                </div>
+                <h3 class="py-3  d-flex justify-content-center align-items-center fw-bold">Rahul</h3>
+              </div>
+            
+        </div>
+    </div>
+  </div>
 
-{% endblock javascripts %}
+  <div id="contact" class="contact-us section">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6 offset-lg-3">
+          <div class="section-heading wow fadeIn" data-wow-duration="1s" data-wow-delay="0.5s">
+            <h6>Contact Us</h6>
+            <h4>Get In Touch With Us <em>Now</em></h4>
+            <div class="line-dec"></div>
+          </div>
+        </div>
+        <div class="col-lg-12 wow fadeInUp" data-wow-duration="0.5s" data-wow-delay="0.25s">
+          <form id="contact" action="" method="post">
+            <div class="row">
+              <div class="col-lg-12">
+                <div class="contact-dec">
+                  <img src="https://www.careerindia.com/img/2019/10/tnpsc-1570097230.jpg" alt="">
+                </div>
+              </div>
+              <div class="col-lg-5">
+                
+              </div>
+              <div class="col-lg-12">
+                <div class="fill-form">
+                  <div class="row">
+                    <div class="col-lg-4">
+                      <div class="info-post">
+                        <div class="icon">
+                          <img src=" {% static 'assets/images/phone-icon.png' %} " alt="">
+                          <a href="#">010-020-0340</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="info-post">
+                        <div class="icon">
+                          <img src=" {% static 'assets/images/email-icon.png' %} " alt="">
+                          <a href="#">our@email.com</a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-4">
+                      <div class="info-post">
+                        <div class="icon">
+                          <img src=" {% static 'assets/images/location-icon.png' %} " alt="">
+                          <a href="#">123 </a>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-lg-6">
+                      <fieldset>
+                        <input type="name" name="name" id="name" placeholder="Name" autocomplete="on" required>
+                      </fieldset>
+                      <fieldset>
+                        <input type="text" name="email" id="email" pattern="[^ @]*@[^ @]*" placeholder="Your Email" required="">
+                      </fieldset>
+                      <fieldset>
+                        <input type="subject" name="subject" id="subject" placeholder="Subject" autocomplete="on">
+                      </fieldset>
+                    </div>
+                    <div class="col-lg-6">
+                      <fieldset>
+                        <textarea name="message" type="text" class="form-control" id="message" placeholder="Message" required=""></textarea>  
+                      </fieldset>
+                    </div>
+                    <div class="col-lg-12">
+                      <fieldset>
+                        <button type="submit" id="form-submit" class="main-button ">Send Message Now</button>
+                      </fieldset>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+<footer>
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-12">
+          <p>Copyright Â© 2023 Myguruplus, Ltd. All Rights Reserved. 
+          <br>Design: <a href="https://templatemo.com" target="_parent" title="free css templates">TemplateMo</a></p>
+        </div>
+      </div>
+    </div>
+  </footer>
+  
+
+  <!-- Scripts -->
+  <script src=" {% static 'vendor/jquery/jquery.min.js' %} "></script>
+  <script src=" {% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %} "></script>
+  <script src=" {% static 'assets/js/owl-carousel.js' %} "></script>
+  <script src=" {% static 'assets/js/animation.js' %} "></script>
+  <script src=" {% static 'assets/js/imagesloaded.js' %} "></script>
+  <script src=" {% static 'assets/js/custom.js' %} "></script>
+
+  <script>
+    let currentRating = 0;
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const stars = document.querySelectorAll('.star');
+        stars.forEach((star, index) => {
+            star.addEventListener('mouseover', () => highlightStars(index));
+            star.addEventListener('mouseout', () => unhighlightStars());
+            star.addEventListener('click', () => rateCourse(index + 1));
+        });
+    });
+
+  </script>
+
+</body>
+</html>
