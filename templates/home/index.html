@@ -105,7 +105,7 @@ https://templatemo.com/tm-568-digimedia
   <!-- ***** Header Area End ***** -->
   <div style="padding-top: 100px; "></div>
   <div class="bg-primary py-3 h-5 breaking ">
-    <p class="h-5 px-5 fs-5 fw-semibold text-black"> Demo content test run</p>
+    <p class="h-5 px-5 fs-5 fw-semibold" style="color:white; font-weight: bold;"> {{ updates }}</p>
   </div>
   <div class="main-banner wow fadeIn" id="top" data-wow-duration="1s" data-wow-delay="0.5s">
     <div class="container">
@@ -123,7 +123,7 @@ https://templatemo.com/tm-568-digimedia
                   {% if auth %}
                     <div class="col-lg-12 d-flex gap-4">
                       <div class="border-first-button scroll-to-section">
-                        <a href="/list_course/root">WorkSpace</a>
+                        <a href="/list_course/root">Show Courses</a>
                       </div>
                     </div>
                   {% else %}
@@ -381,19 +381,19 @@ https://templatemo.com/tm-568-digimedia
                 <div class="thumb ">
                   <img src="https://ideogram.ai/api/images/direct/eBhauiO8Q7Khip8Nadkcyw.jpg" class="rounded " alt="">
                 </div>
-                <h3 class="py-3  d-flex justify-content-center align-items-center fw-bold">Rahul</h3>
+                {% comment %} <h3 class="py-3  d-flex justify-content-center align-items-center fw-bold">Rahul</h3> {% endcomment %}
               </div>
               <div class="card d-flex  col-md-8 col-lg-3 p-3  rounded-5  ">
                 <div class="thumb">
                   <img src="https://ideogram.ai/api/images/direct/w3iyKPBkSAqmypzCiJgQLw.jpg" class="rounded" alt="">
                 </div>
-                <h3 class="py-3  d-flex justify-content-center align-items-center fw-bold">Rahul</h3>
+                {% comment %} <h3 class="py-3  d-flex justify-content-center align-items-center fw-bold">Rahul</h3> {% endcomment %}
               </div>
               <div class="card d-flex  col-md-8 col-lg-3 p-3  rounded-5  ">
                 <div class="thumb">
                   <img src="https://ideogram.ai/api/images/direct/2bVVxLrCSiyyfWWr0p5pgA.jpg" class="rounded " alt="">
                 </div>
-                <h3 class="py-3  d-flex justify-content-center align-items-center fw-bold">Rahul</h3>
+                {% comment %} <h3 class="py-3  d-flex justify-content-center align-items-center fw-bold">Rahul</h3> {% endcomment %}
               </div>
             
         </div>
@@ -427,8 +427,8 @@ https://templatemo.com/tm-568-digimedia
                     <div class="col-lg-4">
                       <div class="info-post">
                         <div class="icon">
-                          <img src=" {% static 'assets/images/phone-icon.png' %} " alt="">
-                          <a href="#">010-020-0340</a>
+                          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/82/Telegram_logo.svg/1024px-Telegram_logo.svg.png" alt="">
+                          <a href="https://telegram.me/tnpscmyguruplus">Telegram Group</a>
                         </div>
                       </div>
                     </div>
@@ -436,40 +436,43 @@ https://templatemo.com/tm-568-digimedia
                       <div class="info-post">
                         <div class="icon">
                           <img src=" {% static 'assets/images/email-icon.png' %} " alt="">
-                          <a href="#">our@email.com</a>
+                          <a href="https://telegram.me/mgpadmin3">Chat With Us</a>
                         </div>
                       </div>
                     </div>
                     <div class="col-lg-4">
                       <div class="info-post">
                         <div class="icon">
-                          <img src=" {% static 'assets/images/location-icon.png' %} " alt="">
-                          <a href="#">123 </a>
+                          <img src="https://img.freepik.com/premium-photo/round-instagram-logo-isolated-white-background_469489-1037.jpg?size=338&ext=jpg&ga=GA1.1.1448711260.1707091200&semt=ais" alt="">
+                          <a href="https://instagram.com/tnpsc_myguruplus?igshid=MmU2YjMzNjRlOQ==">Instagram </a>
                         </div>
                       </div>
                     </div>
-                    <div class="col-lg-6">
-                      <fieldset>
-                        <input type="name" name="name" id="name" placeholder="Name" autocomplete="on" required>
-                      </fieldset>
-                      <fieldset>
-                        <input type="text" name="email" id="email" pattern="[^ @]*@[^ @]*" placeholder="Your Email" required="">
-                      </fieldset>
-                      <fieldset>
-                        <input type="subject" name="subject" id="subject" placeholder="Subject" autocomplete="on">
-                      </fieldset>
+                    {% comment %} <form action="{% url 'submit_contact_form' %}" method="post">
+                      {% csrf_token %}
+                      <div class="col-lg-6">
+                        <fieldset>
+                          <input type="name" name="name" id="name" placeholder="Name" autocomplete="on" >
+                        </fieldset>
+                        <fieldset>
+                          <input type="text" name="email" id="email" pattern="[^ @]*@[^ @]*" placeholder="Your Email" >
+                        </fieldset>
+                        <fieldset>
+                          <input type="subject" name="subject" id="subject" placeholder="Subject" autocomplete="on">
+                        </fieldset>
+                      </div>
+                      <div class="col-lg-6">
+                        <fieldset>
+                          <textarea name="message" type="text" class="form-control" id="message" placeholder="Message" ></textarea>  
+                        </fieldset>
+                      </div>
+                      <div class="col-lg-12">
+                        <fieldset>
+                          <button type="submit" id="form-submit" class="main-button ">Send Message Now</button>
+                        </fieldset>
+                      </div>
+                    </form> {% endcomment %}
                     </div>
-                    <div class="col-lg-6">
-                      <fieldset>
-                        <textarea name="message" type="text" class="form-control" id="message" placeholder="Message" required=""></textarea>  
-                      </fieldset>
-                    </div>
-                    <div class="col-lg-12">
-                      <fieldset>
-                        <button type="submit" id="form-submit" class="main-button ">Send Message Now</button>
-                      </fieldset>
-                    </div>
-                  </div>
                 </div>
               </div>
             </div>

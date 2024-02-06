@@ -150,3 +150,23 @@ class PaymentDb(models.Model):
 
     def __str__(self):
         return f"Payment ID: {self.id}"
+
+class LatestUpdate(models.Model):
+    id = models.AutoField(primary_key=True)
+    message = models.TextField()
+    last_updated = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f'{self.id}: {self.message}'
+
+
+class Contact(models.Model):
+    id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=100)
+    email = models.EmailField(max_length=254)
+    subject = models.CharField(max_length=200)
+    message = models.TextField()
+    last_update = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.name  # or any other field you want to represent the object

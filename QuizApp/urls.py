@@ -16,6 +16,8 @@ from base.views.Payment import *
 from base.views.QuestionImport import *
 from base.views.comment import *
 from base.views.leaderboard import *
+from base.views.LastUpdates import *
+from base.views.Contect import *
 
 urlpatterns = []
 
@@ -32,6 +34,7 @@ auth = [
 common = [
     path('home', home, name='home'),
     path('', home, name='home'),
+    path('ad_home', home2, name='ad_home'),
     path('logout/', logout_view, name='logout'),
 ]
 
@@ -92,12 +95,29 @@ payments = [
 comment = [
      path('create_comment/<str:path>' , create_comment , name='create_comment'),
      path('update_rating/<str:path>' , update_rating , name='update_rating'),
-    #  path('cost_course/<int:folder_id>' , cost_course , name='cost_course')
+     path('about_us',about_us,name="about_us"),
+     path('disclaimer',disclaimer,name="disclaimer"),
+     path('private_policy',private_policy,name="private_policy"),
+     path('return_and_refund',return_and_refund,name="return_and_refund"),
+     path('terms_and_condition',terms_and_condition,name="terms_and_condition"),
+     
 ]
 
 LeaderBoard_url = [
      path('update_leaderboard' , update_leaderboard , name='update_leaderboard'),
      path('leaderboard_view/<str:path>' , leaderboard_view , name='leaderboard_view'),
+]
+
+LastUpdates_url = [
+     path('latest_update_list' , latest_update_list , name='latest_update_list'),
+     path('create_latest_update' , create_latest_update , name='create_latest_update'),
+     path('delete_latest_update/<int:pk>' , delete_latest_update , name='delete_latest_update'),
+    
+]
+
+contact_url = [
+     path('contacts_list', contact_list, name='contact_list'),
+     path('submit_contact_form' , submit_contact_form , name='submit_contact_form'),
 ]
 
 urlpatterns.extend(admin_)
@@ -111,6 +131,8 @@ urlpatterns.extend(time_config)
 urlpatterns.extend(payments)
 urlpatterns.extend(comment)
 urlpatterns.extend(LeaderBoard_url)
+urlpatterns.extend(LastUpdates_url)
+urlpatterns.extend(contact_url)
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

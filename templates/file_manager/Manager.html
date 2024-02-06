@@ -137,6 +137,8 @@
                                     <div x-show="open" @click.away="open = false" class="absolute left-0 z-50 mt-1 text-sm bg-white border border-gray-300 rounded dropdown-menu-end">
                                         <a class="block py-2 px-4 font-semibold text-gray-900 border-b hover:bg-gray-100" href="{% url 'list_reports' %}">Reports</a>
                                         <a class="block py-2 px-4 font-semibold text-gray-900 border-b hover:bg-gray-100" href="{% url 'process_csv' path %}">Import Questions</a>
+                                        <a class="block py-2 px-4 font-semibold text-gray-900 border-b hover:bg-gray-100" href="{% url 'create_latest_update' %}">Last Updates</a>
+                                        <a class="block py-2 px-4 font-semibold text-gray-900 border-b hover:bg-gray-100" href="{% url 'ad_home' %}">Home</a>
                                     </div>
                                 </div>
                             </div>

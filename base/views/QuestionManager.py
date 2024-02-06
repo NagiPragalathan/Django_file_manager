@@ -270,7 +270,7 @@ def handle_questions(request):
             print("in check : ",i.path,i.copy_qust_path, i.explain)
         
         print(questions_data, instructions, len(questions_data))
-
+        print("instructions",instructions)
         for question_data in questions_data:
             question_id = question_data.get('id', None)
             question_text = question_data.get('question', '')
@@ -278,13 +278,13 @@ def handle_questions(request):
             options = question_data.get('options', [])
             correct_answer = question_data.get('correctAnswer', '')
             
-            print(path, len(path),"question_text", question_text, len(question_text))
+            # print(path, len(path),"question_text", question_text, len(question_text))
             # You may need to adjust the category and path values based on your requirements
             category = path.split('.')[1]
             
             if len(question_text) > 9:
                 # Create or update McqQuestionBase instance
-                print("question_id :", question_id)
+                # print("question_id :", question_id)
                 if question_id and question_id != 'none':
                     # Update existing question
                     question = McqQuestionBase.objects.get(pk=question_id)
@@ -295,7 +295,7 @@ def handle_questions(request):
                     question.instructions = instructions
                     question.last_updated_date = timezone.now()
                     question.save()
-                    print(question.question,"are updated...!")
+                    # print(question.question,"are updated...!")
                 else:
                     question, created = McqQuestionBase.objects.get_or_create(
                         question=question_text,

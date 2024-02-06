@@ -4,7 +4,6 @@ from django.db.models import Count
 from datetime import datetime
 
 def ListCourse(request, path):
-    user = request.user
     temp = []
     temp1=[]
     Files = PathManager.objects.filter(path=path)
@@ -88,9 +87,10 @@ def ListCourse(request, path):
             mod_folder.append(i)
         else:
             obj = UserSubscription.objects.get(course_premium="root."+str(i.category))
-            print(obj.is_premium_expired(1))
+            folder_obj = FolderManager.objects.get(category=i.category)
+            print("obj.is_premium_expired(folder_obj.validity_days)",obj.is_premium_expired(folder_obj.validity_days))
             print("premium : ",i.path, i.category, i.validity_days)
-            if not obj.is_premium_expired(1): # Here the code check the validity of subscription
+            if not obj.is_premium_expired(folder_obj.validity_days): # Here the code check the validity of subscription
                 premium.append(i)
     print(premium, mod_folder)
     
@@ -111,17 +111,17 @@ def ListCourse(request, path):
         obj2 = FolderManager.objects.get(category=path.split('.')[1],  path='root')
         print(path, premium, path.split('.')[1], obj2.cost)
         
-    if True:
-        if path == 'root':
-            return render(request, 'UserView/ListCourse.html', {'path':path,'path_alter':path.replace(".", "/"),'star':[1,2,3,4,5],'auth':request.user.is_authenticated,
-                                                            'path_list':out_path,'folders': mod_folder, 'files': Files,'user_exists':not user_exists,
-                                                            'category':category, 'mcq':temp,'mcq_para':temp1, "premium" :premium, 'comments':comments})
-        elif obj2.cost == 0:
-            return render(request, 'UserView/ListCourse_Folder.html', {'path':path,'path_alter':path.replace(".", "/"),'star':[1,2,3,4,5],'auth':request.user.is_authenticated,
-                                                            'path_list':out_path,'folders': mod_folder, 'files': Files,'user_exists':not user_exists,
-                                                            'category':category, 'mcq':temp,'mcq_para':temp1, "premium" :premium, 'comments':comments})
-        else:
-            return render(request, 'UserView/course_error.html',  {'path': obj2.id})
+        
+    if path == 'root':
+        return render(request, 'UserView/ListCourse.html', {'path':path,'path_alter':path.replace(".", "/"),'star':[1,2,3,4,5],'auth':request.user.is_authenticated,
+                                                        'path_list':out_path,'folders': mod_folder, 'files': Files,'user_exists':not user_exists,
+                                                        'category':category, 'mcq':temp,'mcq_para':temp1, "premium" :premium, 'comments':comments})
+    elif obj2.cost == 0 or (path.split('.')[1] in Subscription_path ) :
+        return render(request, 'UserView/ListCourse_Folder.html', {'path':path,'path_alter':path.replace(".", "/"),'star':[1,2,3,4,5],'auth':request.user.is_authenticated,
+                                                        'path_list':out_path,'folders': mod_folder, 'files': Files,'user_exists':not user_exists,
+                                                        'category':category, 'mcq':temp,'mcq_para':temp1, "premium" :premium, 'comments':comments})
+    else:
+        return render(request, 'UserView/course_error.html',  {'path': obj2.id})
             
 def free_courses(request, path, type):
     folders = FolderManager.objects.filter(path=path).order_by('FolderName')
@@ -181,6 +181,7 @@ def take_quiz(request, path):
                 out_mcq.append(i)
     questions = []
     options = []
+    explain = []
     correctAnswer = []
     question_ids = []
 
@@ -188,6 +189,7 @@ def take_quiz(request, path):
     for question in out_mcq:
         questions.append(question.question)
         options.append(question.options)
+        explain.append(question.explain)
         man = question.correct_answer[-1]
         print(question.correct_answer, man)
         correctAnswer.append(question.options[int(man)-1])
@@ -209,6 +211,7 @@ def take_quiz(request, path):
         for i in obj:
             questions.append([i.question,i.instructions])
             options.append(i.options)
+            explain.append(i.explain)
             man = i.correct_answer[-1]
             correctAnswer.append(i.options[int(man)-1])
             question_ids.append(i.id)
@@ -217,5 +220,24 @@ def take_quiz(request, path):
         quest_id = group['quest_id']
         total_questions = group['total_questions']
         print(f"Quest ID: {quest_id}, Total Questions: {total_questions}", correctAnswer)
-    return render(request, "UserView/TakeQuiz.html",{'questions':questions,'options':options, 'answers':correctAnswer, 'question_ids':question_ids, 'timmer':timmer, 'path':path})
-
+        
+    Subscription_path = []
+    user_subs = UserSubscription.objects.filter(user_id=request.user)
+    for i in FolderManager.objects.all():
+        print("i.path", i.path)
+    for i in user_subs:
+        # try:
+        # obj1 = PathManager.objects.get(category=i.course_premium)
+        # print(obj1)
+        obj = FolderManager.objects.get(category=i.course_premium.split('.')[1])
+        print("course_premium",i.course_premium, obj.validity_days)
+        # except:
+        #     print("Error at course_premium", i.course_premium)
+        Subscription_path.append(i.course_premium.split('.')[1])
+    print(Subscription_path, path)
+    
+    if path.split('.')[1] in Subscription_path:
+        return render(request, "UserView/TakeQuiz.html",{'questions':questions,'options':options, 'answers':correctAnswer, 'question_ids':question_ids, "explain":explain, 'timmer':timmer, 'path':path, 'ads': False})
+    else:
+        return render(request, "UserView/TakeQuiz.html",{'questions':questions,'options':options, 'answers':correctAnswer, 'question_ids':question_ids, "explain":explain, 'timmer':timmer, 'path':path,'ads' : True})
+        
