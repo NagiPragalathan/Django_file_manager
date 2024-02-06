@@ -1,5 +1,4 @@
 from django.shortcuts import render
-from django.http import HttpResponse
 import csv
 import io
 from base.models import McqQuestionBase

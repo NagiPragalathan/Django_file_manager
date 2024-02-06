@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
 from base.models import Report, McqQuestionBase
-from django.contrib.auth.decorators import user_passes_test
 
 def is_superuser(user):
     return user.is_authenticated and user.is_superuser

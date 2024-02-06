@@ -59,10 +59,9 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    'http://127.0.0.1:8000',  # Replace with the actual port you are using
-    'http://localhost:8000',
-    # Add other allowed origins as needed
+    '*',
 ]
+
 ROOT_URLCONF = "QuizApp.urls"
 
 TEMPLATES = [

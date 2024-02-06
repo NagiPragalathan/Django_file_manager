@@ -1,13 +1,8 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 import razorpay
-from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 from base.models import FolderManager, UserSubscription, PaymentDb
-from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
-import json
-import hmac
-import hashlib
 
 def cost_course(request, folder_id):
     folder = FolderManager.objects.get(id=folder_id)

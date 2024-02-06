@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from base.models import PathManager, FolderManager, McqQuestionBase, Config, UserSubscription, Comments, Rating
 from django.db.models import Count
-from datetime import datetime
 
 def ListCourse(request, path):
     temp = []
