@@ -59,8 +59,9 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    '*',
+    'https://*',
 ]
+
 
 ROOT_URLCONF = "QuizApp.urls"
 
