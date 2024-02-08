@@ -146,7 +146,7 @@ def free_courses(request, path, type):
     return render(request, 'UserView/ListCourse.html', {'path':path,'path_alter':path.replace(".", "/"), 'premium': folders, 'star':[1,2,3,4,5],})
 
 def show_instructions(request, path):
-    mcq_questions = McqQuestionBase.objects.filter(question_type="MCQ", path=path)
+    mcq_questions = McqQuestionBase.objects.filter(question_type="MCQ")
     instructions_out= ""
     for i in mcq_questions:
         instructions_out = i.instructions
@@ -159,10 +159,6 @@ def show_instructions(request, path):
     for i in user_subscription:
         print(i.course_premium)
     print("............................")
-    
-    for i in McqQuestionBase.objects.all():
-        print(i.path)
-    
     for i in obj:
         print(i.category,i.path)
     return render(request, 'question_manager/instructions.html',{'instructions':instructions_out, 'path':path})
