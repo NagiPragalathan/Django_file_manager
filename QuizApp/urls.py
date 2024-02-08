@@ -18,8 +18,16 @@ from base.views.comment import *
 from base.views.leaderboard import *
 from base.views.LastUpdates import *
 from base.views.Contect import *
+from base.views.Error import *
+from django.conf.urls import handler403, handler404, handler500
 
 urlpatterns = []
+
+
+handler404 = 'base.views.Error.custom_404'
+handler500 = 'base.views.Error.custom_500'
+handler403 = 'base.views.Error.custom_403'
+
 
 admin_ = [
     path('admin/', admin.site.urls),    
@@ -119,6 +127,11 @@ contact_url = [
      path('contacts_list', contact_list, name='contact_list'),
      path('submit_contact_form' , submit_contact_form , name='submit_contact_form'),
 ]
+Error_url = [
+     path('custom_404', custom_404, name='custom_404'),
+     path('custom_500' , custom_500 , name='custom_500'),
+     path('custom_403' , custom_403 , name='custom_403'),
+]
 
 urlpatterns.extend(admin_)
 urlpatterns.extend(auth)
@@ -133,6 +146,7 @@ urlpatterns.extend(comment)
 urlpatterns.extend(LeaderBoard_url)
 urlpatterns.extend(LastUpdates_url)
 urlpatterns.extend(contact_url)
+urlpatterns.extend(Error_url)
 
 urlpatterns += static(settings.MEDIA_URL, document_root = settings.MEDIA_ROOT)
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
