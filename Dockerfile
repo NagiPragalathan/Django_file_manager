@@ -10,7 +10,7 @@ RUN pip install --upgrade pip \
     && apt-get update \
     && pip install -r requirements.txt
 
-COPY . .
+COPY ..
 
 EXPOSE 80
 
